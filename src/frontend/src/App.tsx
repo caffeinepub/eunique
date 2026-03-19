@@ -105,7 +105,7 @@ function CountdownBox({
   );
 }
 
-type Size = "S" | "M" | "L";
+type Size = "S" | "M" | "L" | "XL";
 
 function SizeSelector({
   selected,
@@ -156,13 +156,376 @@ function SizeSelector({
   );
 }
 
+/* ─── Shop Drop Page ────────────────────────────────────────── */
+
+function ShopDropPage({
+  onBack,
+  onSecureYours,
+}: {
+  onBack: () => void;
+  onSecureYours: (size: Size) => void;
+}) {
+  const [selectedSize, setSelectedSize] = useState<Size>("M");
+
+  return (
+    <motion.div
+      key="shop-drop"
+      initial={{ opacity: 0, y: 60 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 60 }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed inset-0 z-50 overflow-y-auto"
+      style={{ background: "oklch(0.06 0 0)" }}
+      data-ocid="shop_drop.modal"
+    >
+      {/* Back button */}
+      <button
+        type="button"
+        onClick={onBack}
+        className="fixed top-6 left-6 z-10 flex items-center gap-2 font-display font-bold uppercase tracking-[0.2em] text-foreground hover:text-muted-foreground transition-colors"
+        style={{ fontSize: "0.7rem" }}
+        data-ocid="shop_drop.close_button"
+      >
+        <ArrowLeft size={16} strokeWidth={2.5} />
+        BACK
+      </button>
+
+      {/* Layout: image left + info right on desktop, stacked on mobile */}
+      <div className="min-h-screen flex flex-col lg:flex-row">
+        {/* Hero image — fills left half on desktop, top 55vh on mobile */}
+        <div
+          className="w-full lg:w-1/2 flex-shrink-0"
+          style={{ minHeight: "55vh" }}
+        >
+          <img
+            src="/assets/uploads/IMG_7866-1.PNG"
+            alt="Art Is Alive — Eunique Tee"
+            className="w-full h-full object-cover object-center"
+            style={{
+              minHeight: "55vh",
+              filter: "grayscale(15%) contrast(1.1)",
+            }}
+          />
+        </div>
+
+        {/* Product info — right side */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center px-8 py-20 lg:py-0">
+          <div className="max-w-md w-full flex flex-col gap-8">
+            {/* Tag */}
+            <span className="sw-tag">Drop 001 — Limited Edition Tee</span>
+
+            {/* Product name */}
+            <h1
+              className="font-display font-black text-foreground uppercase leading-none tracking-tight"
+              style={{
+                fontSize: "clamp(2.8rem, 8vw, 5.5rem)",
+                letterSpacing: "-0.025em",
+              }}
+            >
+              ART IS
+              <br />
+              ALIVE.
+            </h1>
+
+            {/* Price */}
+            <div className="flex items-baseline gap-3">
+              <span
+                className="font-display font-black text-foreground"
+                style={{ fontSize: "2.4rem" }}
+              >
+                ₹2499
+              </span>
+              <span
+                className="font-display text-muted-foreground uppercase tracking-[0.3em]"
+                style={{ fontSize: "0.65rem" }}
+              >
+                Incl. taxes
+              </span>
+            </div>
+
+            {/* Size selector */}
+            <div className="flex flex-col gap-3">
+              <span
+                className="font-display font-bold text-muted-foreground uppercase tracking-[0.35em]"
+                style={{ fontSize: "0.6rem" }}
+              >
+                SELECT SIZE
+              </span>
+              <div
+                className="flex items-center gap-2"
+                data-ocid="shop_drop.size.panel"
+              >
+                {(["S", "M", "L", "XL"] as Size[]).map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => setSelectedSize(size)}
+                    className="font-display font-black uppercase tracking-[0.2em] transition-all duration-150"
+                    style={{
+                      fontSize: "0.75rem",
+                      padding: "0.5rem 1.25rem",
+                      border: "1px solid",
+                      borderColor:
+                        selectedSize === size
+                          ? "oklch(0.98 0 0)"
+                          : "oklch(0.4 0 0)",
+                      background:
+                        selectedSize === size
+                          ? "oklch(0.98 0 0)"
+                          : "transparent",
+                      color:
+                        selectedSize === size
+                          ? "oklch(0.06 0 0)"
+                          : "oklch(0.65 0 0)",
+                      cursor: "pointer",
+                    }}
+                    data-ocid="shop_drop.size.toggle"
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="flex flex-col gap-3">
+              <button
+                type="button"
+                className="btn-primary w-full justify-center"
+                onClick={() => onSecureYours(selectedSize)}
+                data-ocid="shop_drop.primary_button"
+              >
+                SECURE YOURS <ArrowRight size={14} strokeWidth={2.5} />
+              </button>
+              <p
+                className="text-muted-foreground font-display uppercase tracking-[0.25em] text-center"
+                style={{ fontSize: "0.65rem" }}
+              >
+                Limited run. No restock. Ever.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─── Policy Page ───────────────────────────────────────────── */
+
+function PolicyPage({ onBack }: { onBack: () => void }) {
+  return (
+    <motion.div
+      key="policy"
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 40 }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed inset-0 z-[100] bg-background overflow-y-auto"
+      data-ocid="policy.modal"
+    >
+      {/* Top Bar */}
+      <div className="sticky top-0 z-10 bg-background border-b border-border flex items-center justify-between px-5 h-14">
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          data-ocid="policy.close_button"
+        >
+          <ArrowLeft size={16} strokeWidth={2.5} />
+          <span className="font-display font-bold text-[10px] tracking-[0.25em] uppercase">
+            BACK
+          </span>
+        </button>
+        <span className="font-display font-black text-foreground text-lg uppercase tracking-tight">
+          EUNIQUE
+        </span>
+        <div className="w-16" />
+      </div>
+
+      <div className="max-w-[720px] mx-auto px-5 py-14 md:py-20 flex flex-col gap-10">
+        {/* Top note */}
+        <p
+          className="font-display italic text-muted-foreground leading-relaxed border-l-2 border-border pl-4"
+          style={{ fontSize: "0.8rem" }}
+        >
+          Eunique pieces are limited. We recommend checking size details
+          carefully before placing your order.
+        </p>
+
+        {/* Page Title */}
+        <div className="flex flex-col gap-3">
+          <h1
+            className="font-display font-black text-foreground uppercase leading-none"
+            style={{
+              fontSize: "clamp(2rem, 7vw, 4.5rem)",
+              letterSpacing: "-0.03em",
+            }}
+          >
+            EXCHANGE &amp;
+            <br />
+            RETURNS
+          </h1>
+          <p className="font-sans text-muted-foreground text-sm leading-relaxed">
+            At Eunique, every piece is made with intent. If something doesn't
+            feel right, we've got you.
+          </p>
+        </div>
+
+        {/* EXCHANGES */}
+        <div className="flex flex-col gap-4">
+          <h2
+            className="font-display font-black text-foreground uppercase tracking-[0.2em]"
+            style={{ fontSize: "0.75rem" }}
+          >
+            EXCHANGES
+          </h2>
+          <ul className="font-sans text-muted-foreground text-sm leading-relaxed list-none space-y-2">
+            {[
+              "Exchange requests must be raised within 7 days of delivery",
+              "The first exchange is free",
+              "Any additional exchange will include a ₹150 handling fee",
+              "After one exchange, only store credit will be issued",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-3">
+                <span className="mt-1.5 inline-block w-1 h-1 rounded-full bg-foreground flex-shrink-0" />
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p className="font-sans text-muted-foreground text-sm leading-relaxed">
+            If reverse pickup fails twice, the product must be couriered to us
+            by the customer.
+          </p>
+          <p className="font-sans text-muted-foreground text-sm leading-relaxed">
+            Once the product reaches us and passes inspection (typically 8–10
+            days), the replacement will be dispatched.
+          </p>
+        </div>
+
+        <div className="border-t border-border" />
+
+        {/* RETURNS */}
+        <div className="flex flex-col gap-4">
+          <h2
+            className="font-display font-black text-foreground uppercase tracking-[0.2em]"
+            style={{ fontSize: "0.75rem" }}
+          >
+            RETURNS
+          </h2>
+          <ul className="font-sans text-muted-foreground text-sm leading-relaxed list-none space-y-2">
+            {[
+              "Returns must be requested within 4 days of delivery",
+              "A ₹100 handling fee applies",
+              "For returns involving more than 2 items, a ₹200 fee will be deducted",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-3">
+                <span className="mt-1.5 inline-block w-1 h-1 rounded-full bg-foreground flex-shrink-0" />
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p className="font-sans text-muted-foreground text-sm leading-relaxed">
+            If reverse pickup fails twice, the product must be shipped by the
+            customer.
+          </p>
+          <p className="font-sans text-muted-foreground text-sm leading-relaxed">
+            Refunds are initiated after inspection (typically 8–10 working
+            days).
+          </p>
+        </div>
+
+        <div className="border-t border-border" />
+
+        {/* REFUNDS */}
+        <div className="flex flex-col gap-4">
+          <h2
+            className="font-display font-black text-foreground uppercase tracking-[0.2em]"
+            style={{ fontSize: "0.75rem" }}
+          >
+            REFUNDS
+          </h2>
+          <ul className="font-sans text-muted-foreground text-sm leading-relaxed list-none space-y-2">
+            {[
+              "Refunds are issued to the original payment method only",
+              "Processing time: 8–10 working days after verification",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-3">
+                <span className="mt-1.5 inline-block w-1 h-1 rounded-full bg-foreground flex-shrink-0" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="border-t border-border" />
+
+        {/* IMPORTANT */}
+        <div className="flex flex-col gap-4">
+          <h2
+            className="font-display font-black text-foreground uppercase tracking-[0.2em]"
+            style={{ fontSize: "0.75rem" }}
+          >
+            IMPORTANT
+          </h2>
+          <ul className="font-sans text-muted-foreground text-sm leading-relaxed list-none space-y-2">
+            {[
+              "Prepaid orders only (No COD available)",
+              "Items must be unused, unworn, and unwashed",
+              "All original tags and packaging must be intact",
+              "Sale / clearance items are not eligible for returns or exchanges",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-3">
+                <span className="mt-1.5 inline-block w-1 h-1 rounded-full bg-foreground flex-shrink-0" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="border-t border-border" />
+
+        {/* CONTACT */}
+        <div className="flex flex-col gap-3">
+          <h2
+            className="font-display font-black text-foreground uppercase tracking-[0.2em]"
+            style={{ fontSize: "0.75rem" }}
+          >
+            CONTACT
+          </h2>
+          <p className="font-sans text-muted-foreground text-sm">
+            For any queries or support:
+          </p>
+          <a
+            href="mailto:euniqueclothing.in@gmail.com"
+            className="font-display font-bold text-foreground hover:text-muted-foreground transition-colors text-sm flex items-center gap-2"
+            data-ocid="policy.link"
+          >
+            <Mail size={13} strokeWidth={2} />
+            euniqueclothing.in@gmail.com
+          </a>
+        </div>
+
+        {/* Bottom note */}
+        <p
+          className="font-display italic text-muted-foreground leading-relaxed border-l-2 border-border pl-4"
+          style={{ fontSize: "0.8rem" }}
+        >
+          Eunique pieces are limited. We recommend checking size details
+          carefully before placing your order.
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
 /* ─── Checkout Page ─────────────────────────────────────────── */
 
 function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
   const [copied, setCopied] = useState(false);
   const [paid, setPaid] = useState(false);
 
-  const upiId = "uniqueclothing.in@gmail.com";
+  const upiId = "9810081327@rbl";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(upiId).then(() => {
@@ -292,10 +655,13 @@ function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
               <div className="flex gap-5 items-start">
                 <div className="flex-shrink-0 w-[110px] h-[132px] overflow-hidden border border-border">
                   <img
-                    src="/assets/uploads/IMG_7860-1.PNG"
+                    src="/assets/uploads/IMG_7860-2-1.PNG"
                     alt="Art Is Alive Tee"
                     className="w-full h-full object-cover"
-                    style={{ filter: "grayscale(100%) brightness(0.9)" }}
+                    style={{
+                      filter: "grayscale(30%) brightness(1.1) contrast(1.1)",
+                      backgroundColor: "#fff",
+                    }}
                   />
                 </div>
                 <div className="flex flex-col gap-2 pt-1">
@@ -364,6 +730,37 @@ function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
               >
                 PAY VIA UPI
               </h2>
+
+              {/* QR Code */}
+              <div className="flex flex-col gap-2">
+                <span
+                  className="font-display font-bold text-muted-foreground uppercase tracking-[0.3em]"
+                  style={{ fontSize: "0.6rem" }}
+                >
+                  SCAN TO PAY
+                </span>
+                <div
+                  className="border border-border p-3 bg-white inline-flex items-center justify-center"
+                  style={{ width: "fit-content" }}
+                >
+                  <img
+                    src="/assets/uploads/IMG_7862-1.jpg"
+                    alt="UPI QR Code — Scan to Pay"
+                    style={{
+                      width: "200px",
+                      height: "200px",
+                      objectFit: "contain",
+                      display: "block",
+                    }}
+                  />
+                </div>
+                <p
+                  className="font-display font-bold text-muted-foreground uppercase tracking-[0.25em]"
+                  style={{ fontSize: "0.55rem" }}
+                >
+                  Scan with any UPI app
+                </p>
+              </div>
 
               {/* UPI ID Box */}
               <div className="flex flex-col gap-2">
@@ -523,13 +920,16 @@ function DropCountdown({
         {/* LEFT — Product Image */}
         <div
           className="relative w-full lg:w-1/2 overflow-hidden"
-          style={{ minHeight: "55vw" }}
+          style={{ minHeight: "40vh" }}
         >
           <img
-            src="/assets/uploads/IMG_7860-1.PNG"
+            src="/assets/uploads/IMG_7860-2-1.PNG"
             alt="Eunique Drop 001 — Limited Edition Tee"
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ filter: "grayscale(30%) brightness(0.88)" }}
+            style={{
+              filter: "grayscale(0%) brightness(1) contrast(1.05)",
+              backgroundColor: "#fff",
+            }}
           />
           {/* Edge vignette */}
           <div
@@ -548,7 +948,7 @@ function DropCountdown({
         </div>
 
         {/* RIGHT — Content */}
-        <div className="w-full lg:w-1/2 flex flex-col justify-center px-7 py-14 md:px-14 lg:px-16 xl:px-20 gap-6">
+        <div className="w-full lg:w-1/2 flex flex-col justify-center px-7 py-8 md:py-14 md:px-14 lg:px-16 xl:px-20 gap-4 lg:gap-6">
           {/* Desktop tag */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -571,7 +971,7 @@ function DropCountdown({
             transition={{ duration: 0.75, delay: 0.15 }}
             className="font-display font-black text-foreground uppercase leading-none"
             style={{
-              fontSize: "clamp(3rem, 10vw, 8.5rem)",
+              fontSize: "clamp(2rem, 10vw, 8.5rem)",
               letterSpacing: "-0.03em",
             }}
           >
@@ -800,7 +1200,7 @@ function Header() {
   );
 }
 
-function HeroSection() {
+function HeroSection({ onShopDrop }: { onShopDrop?: () => void }) {
   return (
     <section
       className="relative overflow-hidden"
@@ -865,6 +1265,7 @@ function HeroSection() {
             <button
               type="button"
               className="btn-primary"
+              onClick={() => onShopDrop?.()}
               data-ocid="hero.primary_button"
             >
               SHOP THE DROP <ArrowRight size={14} strokeWidth={2.5} />
@@ -986,7 +1387,7 @@ function BrandStatement() {
   );
 }
 
-function Footer() {
+function Footer({ onOpenPolicy }: { onOpenPolicy: () => void }) {
   const [email, setEmail] = useState("");
   const { mutate, isPending, isSuccess, isError } = useSubscribeNewsletter();
 
@@ -1038,27 +1439,35 @@ function Footer() {
               SUPPORT
             </h3>
             <ul className="space-y-3">
-              {["Sizing", "Shipping & Returns", "Track Order", "FAQs"].map(
-                (l) => (
-                  <li key={l}>
-                    <a
-                      href="/"
-                      className="font-sans text-muted-foreground text-xs hover:text-foreground transition-colors tracking-wide"
-                      data-ocid="footer.link"
-                    >
-                      {l}
-                    </a>
-                  </li>
-                ),
-              )}
+              {["Sizing", "Track Order", "FAQs"].map((l) => (
+                <li key={l}>
+                  <a
+                    href="/"
+                    className="font-sans text-muted-foreground text-xs hover:text-foreground transition-colors tracking-wide"
+                    data-ocid="footer.link"
+                  >
+                    {l}
+                  </a>
+                </li>
+              ))}
+              <li>
+                <button
+                  type="button"
+                  onClick={onOpenPolicy}
+                  className="font-sans text-muted-foreground text-xs hover:text-foreground transition-colors tracking-wide text-left"
+                  data-ocid="footer.link"
+                >
+                  Returns &amp; Exchanges
+                </button>
+              </li>
               <li>
                 <a
-                  href="mailto:uniqueclothing.in@gmail.com"
+                  href="mailto:euniqueclothing.in@gmail.com"
                   className="font-sans text-muted-foreground text-xs hover:text-foreground transition-colors flex items-center gap-1.5"
                   data-ocid="footer.link"
                 >
                   <Mail size={11} strokeWidth={2} />
-                  uniqueclothing.in@gmail.com
+                  euniqueclothing.in@gmail.com
                 </a>
               </li>
             </ul>
@@ -1201,6 +1610,8 @@ function Footer() {
 export default function App() {
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [checkoutSize, setCheckoutSize] = useState<Size>("M");
+  const [policyOpen, setPolicyOpen] = useState(false);
+  const [shopOpen, setShopOpen] = useState(false);
 
   const handleSecureYours = (size: Size) => {
     setCheckoutSize(size);
@@ -1213,23 +1624,35 @@ export default function App() {
       <Toaster position="top-right" />
 
       <AnimatePresence>
+        {shopOpen && (
+          <ShopDropPage
+            onBack={() => setShopOpen(false)}
+            onSecureYours={(size) => {
+              setShopOpen(false);
+              setCheckoutSize(size);
+              setCheckoutOpen(true);
+              window.scrollTo({ top: 0, behavior: "instant" });
+            }}
+          />
+        )}
         {checkoutOpen && (
           <CheckoutPage
             size={checkoutSize}
             onBack={() => setCheckoutOpen(false)}
           />
         )}
+        {policyOpen && <PolicyPage onBack={() => setPolicyOpen(false)} />}
       </AnimatePresence>
 
       <Header />
       <main>
-        <HeroSection />
+        <HeroSection onShopDrop={() => setShopOpen(true)} />
         <MarqueeBand />
         <DropCountdown onSecureYours={handleSecureYours} />
         <WatermarkBand />
         <BrandStatement />
       </main>
-      <Footer />
+      <Footer onOpenPolicy={() => setPolicyOpen(true)} />
     </div>
   );
 }
