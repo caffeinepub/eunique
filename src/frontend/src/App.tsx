@@ -1,0 +1,1235 @@
+import { Toaster } from "@/components/ui/sonner";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Copy,
+  Instagram,
+  Mail,
+  Menu,
+  ShoppingBag,
+  X,
+} from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { useSubscribeNewsletter } from "./hooks/useQueries";
+
+const NAV_LINKS = ["DROPS", "FITS", "COLLABS", "LOOKBOOK", "ABOUT"];
+
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) setVisible(true);
+      },
+      { threshold },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, visible };
+}
+
+function useCountdown(targetDate: Date) {
+  const targetMs = targetDate.getTime();
+  const [time, setTime] = useState(() => {
+    const diff = Math.max(0, targetMs - Date.now());
+    return {
+      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+      hrs: Math.floor((diff / (1000 * 60 * 60)) % 24),
+      min: Math.floor((diff / (1000 * 60)) % 60),
+      sec: Math.floor((diff / 1000) % 60),
+    };
+  });
+  useEffect(() => {
+    const id = setInterval(() => {
+      const diff = Math.max(0, targetMs - Date.now());
+      setTime({
+        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        hrs: Math.floor((diff / (1000 * 60 * 60)) % 24),
+        min: Math.floor((diff / (1000 * 60)) % 60),
+        sec: Math.floor((diff / 1000) % 60),
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [targetMs]);
+  return time;
+}
+
+function CountdownBox({
+  value,
+  label,
+  delay,
+}: { value: number; label: string; delay: number }) {
+  const [prev, setPrev] = useState(value);
+  const [pulse, setPulse] = useState(false);
+  useEffect(() => {
+    if (value !== prev) {
+      setPulse(true);
+      setPrev(value);
+      const t = setTimeout(() => setPulse(false), 300);
+      return () => clearTimeout(t);
+    }
+  }, [value, prev]);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay }}
+      className="flex flex-col items-center justify-center border border-border bg-secondary/30 px-3 py-4 md:px-6 md:py-6 min-w-[72px] md:min-w-[110px]"
+      data-ocid="countdown.panel"
+    >
+      <span
+        className="font-display font-black text-foreground leading-none"
+        style={{
+          fontSize: "clamp(2.5rem, 8vw, 5.5rem)",
+          transform: pulse ? "scale(1.18)" : "scale(1)",
+          transition: "transform 0.18s cubic-bezier(.22,.68,0,1.2)",
+          display: "block",
+        }}
+      >
+        {String(value).padStart(2, "0")}
+      </span>
+      <span
+        className="font-display font-bold text-muted-foreground uppercase tracking-widest mt-1"
+        style={{ fontSize: "0.55rem", letterSpacing: "0.25em" }}
+      >
+        {label}
+      </span>
+    </motion.div>
+  );
+}
+
+type Size = "S" | "M" | "L";
+
+function SizeSelector({
+  selected,
+  onSelect,
+  visible,
+}: {
+  selected: Size;
+  onSelect: (s: Size) => void;
+  visible: boolean;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      animate={visible ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay: 0.45 }}
+      className="flex flex-col gap-3"
+    >
+      <span
+        className="font-display font-bold text-muted-foreground uppercase tracking-[0.35em]"
+        style={{ fontSize: "0.6rem" }}
+      >
+        SELECT SIZE
+      </span>
+      <div className="flex items-center gap-2" data-ocid="size.panel">
+        {(["S", "M", "L"] as Size[]).map((size) => (
+          <button
+            key={size}
+            type="button"
+            onClick={() => onSelect(size)}
+            className="font-display font-black uppercase tracking-[0.2em] transition-all duration-150"
+            style={{
+              fontSize: "0.75rem",
+              padding: "0.45rem 1.15rem",
+              border: "1px solid",
+              borderColor:
+                selected === size ? "oklch(0.98 0 0)" : "oklch(0.4 0 0)",
+              background: selected === size ? "oklch(0.98 0 0)" : "transparent",
+              color: selected === size ? "oklch(0.06 0 0)" : "oklch(0.65 0 0)",
+              cursor: "pointer",
+            }}
+            data-ocid="size.toggle"
+          >
+            {size}
+          </button>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─── Checkout Page ─────────────────────────────────────────── */
+
+function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
+  const [copied, setCopied] = useState(false);
+  const [paid, setPaid] = useState(false);
+
+  const upiId = "uniqueclothing.in@gmail.com";
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(upiId).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <motion.div
+      key="checkout"
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 40 }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed inset-0 z-[100] bg-background overflow-y-auto"
+      data-ocid="checkout.modal"
+    >
+      {/* Top Bar */}
+      <div className="sticky top-0 z-10 bg-background border-b border-border flex items-center justify-between px-5 h-14">
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          data-ocid="checkout.close_button"
+        >
+          <ArrowLeft size={16} strokeWidth={2.5} />
+          <span className="font-display font-bold text-[10px] tracking-[0.25em] uppercase">
+            BACK
+          </span>
+        </button>
+        <span className="font-display font-black text-foreground text-lg uppercase tracking-tight">
+          EUNIQUE
+        </span>
+        <div className="w-16" />
+        {/* spacer */}
+      </div>
+
+      <AnimatePresence mode="wait">
+        {paid ? (
+          /* ── Confirmation State ── */
+          <motion.div
+            key="confirmed"
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="flex flex-col items-center justify-center min-h-[calc(100vh-3.5rem)] px-5 text-center gap-8"
+            data-ocid="checkout.success_state"
+          >
+            <div className="flex flex-col items-center gap-6 max-w-md">
+              {/* Pulsing red dot */}
+              <span
+                className="inline-block w-3 h-3 rounded-full bg-red-500"
+                style={{
+                  boxShadow: "0 0 12px 3px rgba(239,68,68,0.7)",
+                  animation: "pulse-red 1.4s ease-in-out infinite",
+                }}
+              />
+              <h2
+                className="font-display font-black text-foreground uppercase leading-none"
+                style={{
+                  fontSize: "clamp(2.5rem, 10vw, 6rem)",
+                  letterSpacing: "-0.03em",
+                }}
+              >
+                ORDER
+                <br />
+                RECEIVED.
+              </h2>
+              <p className="font-sans text-muted-foreground text-sm leading-relaxed">
+                We'll confirm your drop on WhatsApp or email shortly.
+                <br />
+                <strong className="text-foreground">Stay locked.</strong>
+              </p>
+              <div className="border border-border px-6 py-4 flex flex-col gap-1 w-full">
+                <span
+                  className="font-display font-bold text-muted-foreground uppercase tracking-[0.3em]"
+                  style={{ fontSize: "0.6rem" }}
+                >
+                  YOUR ORDER
+                </span>
+                <span className="font-display font-black text-foreground uppercase tracking-tight text-lg">
+                  ART IS ALIVE TEE — SIZE {size}
+                </span>
+                <span
+                  className="font-display font-bold text-muted-foreground uppercase tracking-[0.25em]"
+                  style={{ fontSize: "0.6rem" }}
+                >
+                  DROP 001 — LIMITED EDITION
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={onBack}
+                className="btn-ghost"
+                data-ocid="checkout.cancel_button"
+              >
+                BACK TO SITE
+              </button>
+            </div>
+          </motion.div>
+        ) : (
+          /* ── Payment State ── */
+          <motion.div
+            key="payment"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="max-w-[1100px] mx-auto px-5 py-12 md:py-20 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16"
+          >
+            {/* LEFT — Order Summary */}
+            <div className="flex flex-col gap-7">
+              <h2
+                className="font-display font-black text-foreground uppercase tracking-tight"
+                style={{
+                  fontSize: "clamp(1.5rem, 4vw, 2.5rem)",
+                  letterSpacing: "-0.02em",
+                }}
+                data-ocid="checkout.panel"
+              >
+                ORDER SUMMARY
+              </h2>
+
+              {/* Product row */}
+              <div className="flex gap-5 items-start">
+                <div className="flex-shrink-0 w-[110px] h-[132px] overflow-hidden border border-border">
+                  <img
+                    src="/assets/uploads/IMG_7860-1.PNG"
+                    alt="Art Is Alive Tee"
+                    className="w-full h-full object-cover"
+                    style={{ filter: "grayscale(100%) brightness(0.9)" }}
+                  />
+                </div>
+                <div className="flex flex-col gap-2 pt-1">
+                  <span
+                    className="font-display font-black text-foreground uppercase leading-tight"
+                    style={{ fontSize: "1.1rem", letterSpacing: "-0.01em" }}
+                  >
+                    ART IS ALIVE TEE
+                  </span>
+                  <span className="sw-tag" style={{ fontSize: "0.55rem" }}>
+                    DROP 001 — LIMITED EDITION
+                  </span>
+                  <div className="flex flex-col gap-1 mt-2">
+                    <span
+                      className="font-display font-bold text-muted-foreground uppercase tracking-[0.3em]"
+                      style={{ fontSize: "0.6rem" }}
+                    >
+                      SIZE
+                    </span>
+                    <span className="font-display font-black text-foreground uppercase text-base tracking-wide">
+                      {size === "S"
+                        ? "SMALL"
+                        : size === "M"
+                          ? "MEDIUM"
+                          : "LARGE"}
+                    </span>
+                  </div>
+                  <span className="font-display font-black text-foreground text-2xl mt-1">
+                    ₹2499
+                  </span>
+                </div>
+              </div>
+
+              <p
+                className="font-display font-bold text-muted-foreground uppercase tracking-[0.25em]"
+                style={{ fontSize: "0.58rem" }}
+              >
+                Limited run. No restock. Ever.
+              </p>
+
+              {/* Divider */}
+              <div className="border-t border-border" />
+
+              {/* Total */}
+              <div className="flex items-center justify-between">
+                <span
+                  className="font-display font-bold text-muted-foreground uppercase tracking-[0.3em]"
+                  style={{ fontSize: "0.65rem" }}
+                >
+                  TOTAL
+                </span>
+                <span className="font-display font-black text-foreground text-3xl">
+                  ₹2499
+                </span>
+              </div>
+            </div>
+
+            {/* RIGHT — UPI Payment */}
+            <div className="flex flex-col gap-7">
+              <h2
+                className="font-display font-black text-foreground uppercase tracking-tight"
+                style={{
+                  fontSize: "clamp(1.5rem, 4vw, 2.5rem)",
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                PAY VIA UPI
+              </h2>
+
+              {/* UPI ID Box */}
+              <div className="flex flex-col gap-2">
+                <span
+                  className="font-display font-bold text-muted-foreground uppercase tracking-[0.3em]"
+                  style={{ fontSize: "0.6rem" }}
+                >
+                  UPI ID
+                </span>
+                <div className="flex items-center justify-between border border-border px-4 py-4 gap-3">
+                  <span
+                    className="font-mono text-foreground text-sm tracking-wide flex-1 break-all"
+                    data-ocid="checkout.input"
+                  >
+                    {upiId}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="flex items-center gap-1.5 flex-shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                    data-ocid="checkout.button"
+                  >
+                    {copied ? (
+                      <>
+                        <Check
+                          size={14}
+                          strokeWidth={2.5}
+                          className="text-green-400"
+                        />
+                        <span
+                          className="font-display font-bold text-green-400 uppercase tracking-[0.2em]"
+                          style={{ fontSize: "0.6rem" }}
+                        >
+                          COPIED!
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={14} strokeWidth={2} />
+                        <span
+                          className="font-display font-bold uppercase tracking-[0.2em]"
+                          style={{ fontSize: "0.6rem" }}
+                        >
+                          COPY
+                        </span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Supported apps */}
+              <div className="flex flex-col gap-2">
+                <span
+                  className="font-display font-bold text-muted-foreground uppercase tracking-[0.3em]"
+                  style={{ fontSize: "0.6rem" }}
+                >
+                  ACCEPTED VIA
+                </span>
+                <p
+                  className="font-display font-bold text-foreground uppercase tracking-[0.18em]"
+                  style={{ fontSize: "0.72rem" }}
+                >
+                  GPay · PhonePe · Paytm · Any UPI App
+                </p>
+              </div>
+
+              {/* Instructions */}
+              <div className="border border-border px-5 py-5 flex flex-col gap-2">
+                <span
+                  className="font-display font-bold text-muted-foreground uppercase tracking-[0.3em]"
+                  style={{ fontSize: "0.6rem" }}
+                >
+                  HOW TO PAY
+                </span>
+                <ol className="font-sans text-muted-foreground text-xs leading-relaxed list-decimal list-inside space-y-1.5">
+                  <li>Open your UPI app (GPay, PhonePe, Paytm, etc.)</li>
+                  <li>
+                    Tap <strong className="text-foreground">'Pay'</strong> or{" "}
+                    <strong className="text-foreground">'Send Money'</strong>
+                  </li>
+                  <li>
+                    Enter the UPI ID above:{" "}
+                    <strong className="text-foreground font-mono">
+                      {upiId}
+                    </strong>
+                  </li>
+                  <li>
+                    Enter amount:{" "}
+                    <strong className="text-foreground">₹2499</strong>
+                  </li>
+                  <li>Complete payment &amp; note your transaction ID</li>
+                  <li>
+                    Click{" "}
+                    <strong className="text-foreground">"I HAVE PAID"</strong>{" "}
+                    below
+                  </li>
+                </ol>
+              </div>
+
+              {/* CTA */}
+              <button
+                type="button"
+                onClick={() => setPaid(true)}
+                className="btn-primary w-full justify-center"
+                data-ocid="checkout.confirm_button"
+              >
+                I HAVE PAID <Check size={16} strokeWidth={2.5} />
+              </button>
+
+              <p className="font-sans text-muted-foreground text-xs leading-relaxed">
+                After payment, we'll reach out on WhatsApp or email to confirm
+                your order. Make sure to share your transaction ID if asked.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+/* ─── Drop Countdown ────────────────────────────────────────── */
+
+function DropCountdown({
+  onSecureYours,
+}: { onSecureYours: (size: Size) => void }) {
+  const targetRef = useRef<Date>(
+    new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+  );
+  const { days, hrs, min, sec } = useCountdown(targetRef.current);
+  const { ref, visible } = useInView(0.1);
+  const [selectedSize, setSelectedSize] = useState<Size>("M");
+
+  return (
+    <section
+      ref={ref as React.RefObject<HTMLElement>}
+      className="relative overflow-hidden bg-background border-t border-border"
+      style={{ minHeight: "100svh" }}
+      aria-label="Limited Edition Drop Countdown"
+      data-ocid="countdown.section"
+    >
+      {/* Subtle noise-like grid overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 70% 40%, oklch(0.12 0 0) 0%, transparent 65%)",
+          zIndex: 0,
+        }}
+      />
+
+      <div
+        className="relative z-10 flex flex-col lg:flex-row h-full"
+        style={{ minHeight: "100svh" }}
+      >
+        {/* LEFT — Product Image */}
+        <div
+          className="relative w-full lg:w-1/2 overflow-hidden"
+          style={{ minHeight: "55vw" }}
+        >
+          <img
+            src="/assets/uploads/IMG_7860-1.PNG"
+            alt="Eunique Drop 001 — Limited Edition Tee"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ filter: "grayscale(30%) brightness(0.88)" }}
+          />
+          {/* Edge vignette */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to right, rgba(0,0,0,0.1) 0%, transparent 30%, rgba(0,0,0,0.55) 100%)",
+            }}
+          />
+          {/* Mobile overlay top tag */}
+          <div className="absolute top-6 left-6 lg:hidden">
+            <span className="sw-tag" style={{ fontSize: "0.6rem" }}>
+              DROP 001 — LIMITED EDITION
+            </span>
+          </div>
+        </div>
+
+        {/* RIGHT — Content */}
+        <div className="w-full lg:w-1/2 flex flex-col justify-center px-7 py-14 md:px-14 lg:px-16 xl:px-20 gap-6">
+          {/* Desktop tag */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={visible ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.05 }}
+            className="hidden lg:block"
+          >
+            <span
+              className="font-display font-bold uppercase text-foreground tracking-[0.4em]"
+              style={{ fontSize: "0.65rem" }}
+            >
+              DROP 001 — LIMITED EDITION
+            </span>
+          </motion.div>
+
+          {/* Main Headline */}
+          <motion.h2
+            initial={{ opacity: 0, y: 28 }}
+            animate={visible ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.75, delay: 0.15 }}
+            className="font-display font-black text-foreground uppercase leading-none"
+            style={{
+              fontSize: "clamp(3rem, 10vw, 8.5rem)",
+              letterSpacing: "-0.03em",
+            }}
+          >
+            ART IS
+            <br />
+            ALIVE.
+          </motion.h2>
+
+          {/* Sub-headline */}
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={visible ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.28 }}
+            className="font-display font-bold text-muted-foreground uppercase tracking-[0.28em]"
+            style={{ fontSize: "0.65rem" }}
+          >
+            ONE TEE. ONE DROP. NO RESTOCK.
+          </motion.p>
+
+          {/* Brand Story Excerpt */}
+          <motion.blockquote
+            initial={{ opacity: 0 }}
+            animate={visible ? { opacity: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="border-l-2 border-border pl-4 italic text-muted-foreground leading-relaxed"
+            style={{ fontSize: "0.72rem" }}
+          >
+            "Eunique wasn't built to fit in. Every drop is limited — not to
+            create hype, but because not everyone deserves it. This isn't fast
+            fashion. This is identity."
+          </motion.blockquote>
+
+          {/* Size Selector */}
+          <SizeSelector
+            selected={selectedSize}
+            onSelect={setSelectedSize}
+            visible={visible}
+          />
+
+          {/* Countdown Grid */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={visible ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.55 }}
+            className="flex items-center gap-2 md:gap-3"
+          >
+            <CountdownBox value={days} label="DAYS" delay={0.6} />
+            <CountdownBox value={hrs} label="HRS" delay={0.67} />
+            <CountdownBox value={min} label="MIN" delay={0.74} />
+            <CountdownBox value={sec} label="SEC" delay={0.81} />
+          </motion.div>
+
+          {/* Live indicator + urgency */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={visible ? { opacity: 1 } : {}}
+            transition={{ duration: 0.6, delay: 0.9 }}
+            className="flex items-center gap-3"
+          >
+            <span
+              className="inline-block w-2 h-2 rounded-full bg-red-500"
+              style={{
+                boxShadow: "0 0 8px 2px rgba(239,68,68,0.7)",
+                animation: "pulse-red 1.4s ease-in-out infinite",
+              }}
+            />
+            <span
+              className="font-display font-bold text-muted-foreground uppercase tracking-[0.25em]"
+              style={{ fontSize: "0.6rem" }}
+            >
+              LIVE IN
+            </span>
+            <span
+              className="font-display font-bold text-foreground uppercase tracking-[0.18em]"
+              style={{ fontSize: "0.6rem" }}
+            >
+              — Only a few will get it.
+            </span>
+          </motion.div>
+
+          {/* CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={visible ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.65, delay: 1.0 }}
+            className="flex flex-col gap-2"
+          >
+            <button
+              type="button"
+              className="btn-primary self-start"
+              onClick={() => onSecureYours(selectedSize)}
+              data-ocid="countdown.primary_button"
+            >
+              SECURE YOURS — SIZE {selectedSize}{" "}
+              <ArrowRight size={14} strokeWidth={2.5} />
+            </button>
+            <span
+              className="font-display font-bold text-muted-foreground uppercase tracking-[0.25em]"
+              style={{ fontSize: "0.6rem" }}
+            >
+              Limited run. No restock. Ever.
+            </span>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Vertical label on desktop */}
+      <div
+        className="absolute left-5 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-2"
+        aria-hidden="true"
+      >
+        <div
+          className="font-display font-black text-muted-foreground uppercase"
+          style={{
+            fontSize: "0.55rem",
+            letterSpacing: "0.3em",
+            writingMode: "vertical-rl",
+            opacity: 0.35,
+          }}
+        >
+          DROP 001 ✦ EUNIQUE ✦ 2026
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Header() {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
+
+  return (
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
+        scrolled ? "bg-background border-b border-border" : "bg-transparent"
+      }`}
+    >
+      <div className="max-w-[1280px] mx-auto px-5 h-14 flex items-center justify-between">
+        {/* Logo */}
+        <a
+          href="/"
+          className="font-display text-foreground font-black text-xl tracking-[-0.02em] uppercase select-none"
+          data-ocid="header.link"
+        >
+          EUNIQUE
+        </a>
+
+        {/* Desktop Nav */}
+        <nav className="hidden lg:flex items-center gap-7">
+          {NAV_LINKS.map((l) => (
+            <a key={l} href="/" className="nav-link" data-ocid="header.link">
+              {l}
+            </a>
+          ))}
+        </nav>
+
+        {/* Actions */}
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            aria-label="Bag"
+            className="hidden md:flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
+            data-ocid="header.button"
+          >
+            <ShoppingBag size={16} strokeWidth={2} />
+            <span className="font-display text-[10px] font-bold tracking-[0.2em] uppercase">
+              BAG (0)
+            </span>
+          </button>
+          <button
+            type="button"
+            aria-label="Toggle menu"
+            className="lg:hidden text-foreground"
+            onClick={() => setMobileOpen((v) => !v)}
+            data-ocid="header.toggle"
+          >
+            {mobileOpen ? (
+              <X size={20} strokeWidth={2.5} />
+            ) : (
+              <Menu size={20} strokeWidth={2.5} />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Nav */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden bg-background border-t border-border overflow-hidden"
+          >
+            <nav className="flex flex-col px-5 py-6 gap-5">
+              {NAV_LINKS.map((l) => (
+                <a
+                  key={l}
+                  href="/"
+                  className="nav-link text-base"
+                  onClick={() => setMobileOpen(false)}
+                  data-ocid="header.link"
+                >
+                  {l}
+                </a>
+              ))}
+              <div className="pt-4 border-t border-border">
+                <button
+                  type="button"
+                  className="nav-link flex items-center gap-2"
+                  data-ocid="header.button"
+                >
+                  <ShoppingBag size={14} strokeWidth={2} /> BAG (0)
+                </button>
+              </div>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
+  );
+}
+
+function HeroSection() {
+  return (
+    <section
+      className="relative overflow-hidden"
+      style={{ minHeight: "100svh" }}
+      aria-label="Hero"
+    >
+      <img
+        src="/assets/generated/sw-hero.dim_1400x900.jpg"
+        alt="EUNIQUE — No Rules. Just Fits."
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ filter: "brightness(0.45) contrast(1.15)" }}
+      />
+
+      {/* Overlay noise texture via CSS */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.85) 100%)",
+        }}
+      />
+
+      {/* Content */}
+      <div
+        className="relative z-10 flex flex-col justify-end h-full"
+        style={{ minHeight: "100svh" }}
+      >
+        <div className="max-w-[1280px] mx-auto px-5 pb-16 md:pb-20 w-full">
+          {/* Season tag */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mb-4"
+          >
+            <span className="sw-tag">DROP 01 — 2026</span>
+          </motion.div>
+
+          {/* Big headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.25 }}
+            className="font-display font-black text-foreground uppercase leading-none tracking-tight mb-6"
+            style={{
+              fontSize: "clamp(3.5rem, 12vw, 11rem)",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            NO RULES.
+            <br />
+            JUST FITS.
+          </motion.h1>
+
+          {/* Sub + CTA row */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.55 }}
+            className="flex flex-col sm:flex-row items-start sm:items-center gap-5"
+          >
+            <button
+              type="button"
+              className="btn-primary"
+              data-ocid="hero.primary_button"
+            >
+              SHOP THE DROP <ArrowRight size={14} strokeWidth={2.5} />
+            </button>
+            <button
+              type="button"
+              className="btn-ghost"
+              data-ocid="hero.secondary_button"
+            >
+              VIEW ALL FITS
+            </button>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Scrolling side text */}
+      <div
+        className="absolute right-5 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-2"
+        aria-hidden="true"
+      >
+        <div
+          className="font-display font-black text-foreground uppercase"
+          style={{
+            fontSize: "0.6rem",
+            letterSpacing: "0.35em",
+            writingMode: "vertical-rl",
+            opacity: 0.4,
+          }}
+        >
+          EUNIQUE — STREETWEAR — 2026
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MarqueeBand() {
+  return (
+    <section
+      className="relative overflow-hidden py-3 bg-foreground select-none"
+      aria-hidden="true"
+    >
+      <div className="flex whitespace-nowrap animate-marquee">
+        {Array.from({ length: 14 }, (_, i) => i).map((i) => (
+          <span
+            key={`tick-${i}`}
+            className="font-display font-black text-background uppercase mx-6"
+            style={{ fontSize: "0.72rem", letterSpacing: "0.25em" }}
+          >
+            EUNIQUE ✦ WEAR YOUR WORLD ✦ NO RULES JUST FITS ✦ DROP 01 ✦
+          </span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function WatermarkBand() {
+  return (
+    <section
+      className="relative overflow-hidden py-0 select-none border-t border-border"
+      aria-hidden="true"
+    >
+      <div className="flex whitespace-nowrap animate-marquee">
+        {Array.from({ length: 8 }, (_, i) => i).map((i) => (
+          <span
+            key={`wm-${i}`}
+            className="font-display font-black text-watermark uppercase leading-none"
+            style={{
+              fontSize: "clamp(5rem, 18vw, 16rem)",
+              letterSpacing: "-0.03em",
+              marginRight: "1rem",
+            }}
+          >
+            EUNIQUE
+          </span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function BrandStatement() {
+  const { ref, visible } = useInView(0.2);
+  return (
+    <section
+      ref={ref}
+      className="py-24 md:py-40 px-5 border-t border-border text-center"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 32 }}
+        animate={visible ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 1 }}
+      >
+        <h2
+          className="font-display font-black text-foreground uppercase leading-none mx-auto mb-8"
+          style={{
+            fontSize: "clamp(2rem, 7vw, 6.5rem)",
+            letterSpacing: "-0.03em",
+            maxWidth: "1000px",
+          }}
+        >
+          DRESS DIFFERENT.
+          <br />
+          MOVE DIFFERENT.
+        </h2>
+        <p className="font-sans text-muted-foreground uppercase tracking-[0.28em] text-xs mb-10">
+          EUNIQUE — Born on the streets. Worn everywhere.
+        </p>
+        <button
+          type="button"
+          className="btn-ghost"
+          data-ocid="statement.primary_button"
+        >
+          EXPLORE THE BRAND <ArrowRight size={14} strokeWidth={2.5} />
+        </button>
+      </motion.div>
+    </section>
+  );
+}
+
+function Footer() {
+  const [email, setEmail] = useState("");
+  const { mutate, isPending, isSuccess, isError } = useSubscribeNewsletter();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    mutate(email, {
+      onSuccess: () => {
+        toast.success("YOU'RE ON THE LIST. STAY LOCKED.");
+        setEmail("");
+      },
+      onError: (err: Error) => {
+        toast.error(
+          err.message === "already_subscribed"
+            ? "That email's already in."
+            : "Something went wrong. Try again.",
+        );
+      },
+    });
+  };
+
+  return (
+    <footer className="bg-background border-t border-border">
+      <div className="max-w-[1280px] mx-auto px-5 py-14 md:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8">
+          {/* Brand col */}
+          <div className="md:col-span-1">
+            <p className="font-display font-black text-foreground text-2xl uppercase tracking-tight mb-3">
+              EUNIQUE
+            </p>
+            <p className="font-sans text-muted-foreground text-xs leading-relaxed mb-4">
+              Born on the streets. Worn everywhere. No rules. No limits. Just
+              authentic fits for real ones.
+            </p>
+            <a
+              href="https://eunique.online"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="nav-link flex items-center gap-1 text-[10px]"
+              data-ocid="footer.link"
+            >
+              eunique.online
+            </a>
+          </div>
+
+          {/* Info col */}
+          <div>
+            <h3 className="font-display font-black text-foreground text-xs uppercase tracking-[0.25em] mb-5">
+              SUPPORT
+            </h3>
+            <ul className="space-y-3">
+              {["Sizing", "Shipping & Returns", "Track Order", "FAQs"].map(
+                (l) => (
+                  <li key={l}>
+                    <a
+                      href="/"
+                      className="font-sans text-muted-foreground text-xs hover:text-foreground transition-colors tracking-wide"
+                      data-ocid="footer.link"
+                    >
+                      {l}
+                    </a>
+                  </li>
+                ),
+              )}
+              <li>
+                <a
+                  href="mailto:uniqueclothing.in@gmail.com"
+                  className="font-sans text-muted-foreground text-xs hover:text-foreground transition-colors flex items-center gap-1.5"
+                  data-ocid="footer.link"
+                >
+                  <Mail size={11} strokeWidth={2} />
+                  uniqueclothing.in@gmail.com
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Shop col */}
+          <div>
+            <h3 className="font-display font-black text-foreground text-xs uppercase tracking-[0.25em] mb-5">
+              SHOP
+            </h3>
+            <ul className="space-y-3">
+              {[
+                "All Drops",
+                "Hoodies",
+                "Bottoms",
+                "Tees",
+                "Outerwear",
+                "Accessories",
+              ].map((l) => (
+                <li key={l}>
+                  <a
+                    href="/"
+                    className="font-sans text-muted-foreground text-xs hover:text-foreground transition-colors tracking-wide"
+                    data-ocid="footer.link"
+                  >
+                    {l}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Newsletter col */}
+          <div>
+            <h3 className="font-display font-black text-foreground text-xs uppercase tracking-[0.25em] mb-3">
+              STAY ON THE DROP
+            </h3>
+            <p className="font-sans text-muted-foreground text-xs leading-relaxed mb-5">
+              Be first to cop new drops, exclusive collabs, and limited
+              releases.
+            </p>
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-3"
+              data-ocid="newsletter.panel"
+            >
+              <input
+                type="email"
+                placeholder="YOUR EMAIL"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="bg-transparent text-foreground text-xs px-3 py-3 outline-none font-display font-bold tracking-[0.12em] uppercase w-full border border-border placeholder:text-muted-foreground focus:border-foreground transition-colors"
+                data-ocid="newsletter.input"
+              />
+              <button
+                type="submit"
+                disabled={isPending}
+                className="btn-ghost-sm self-start disabled:opacity-50"
+                data-ocid="newsletter.submit_button"
+              >
+                {isPending ? "SENDING..." : "JOIN THE DROP"}
+              </button>
+              {isSuccess && (
+                <p
+                  className="font-display font-bold text-[10px] text-foreground uppercase tracking-widest"
+                  data-ocid="newsletter.success_state"
+                >
+                  YOU'RE IN. STAY LOCKED.
+                </p>
+              )}
+              {isError && (
+                <p
+                  className="text-[10px] text-red-400 font-sans tracking-wide"
+                  data-ocid="newsletter.error_state"
+                >
+                  SOMETHING WENT WRONG.
+                </p>
+              )}
+            </form>
+
+            {/* Socials */}
+            <div className="flex items-center gap-5 mt-8">
+              <a
+                href="/"
+                aria-label="Instagram"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                data-ocid="footer.link"
+              >
+                <Instagram size={15} strokeWidth={2} />
+              </a>
+              <a
+                href="/"
+                aria-label="Twitter"
+                className="font-display font-black text-xs text-muted-foreground hover:text-foreground transition-colors tracking-widest uppercase"
+                data-ocid="footer.link"
+              >
+                TW
+              </a>
+              <a
+                href="/"
+                aria-label="TikTok"
+                className="font-display font-black text-xs text-muted-foreground hover:text-foreground transition-colors tracking-widest uppercase"
+                data-ocid="footer.link"
+              >
+                TT
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="mt-12 pt-6 border-t border-border flex flex-col md:flex-row items-center justify-between gap-3">
+          <p className="font-sans text-muted-foreground text-[10px] uppercase tracking-[0.25em]">
+            © {new Date().getFullYear()}{" "}
+            <a
+              href="https://eunique.online"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground transition-colors"
+            >
+              eunique.online
+            </a>{" "}
+            — ALL RIGHTS RESERVED
+          </p>
+          <a
+            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(typeof window !== "undefined" ? window.location.hostname : "")}`}
+            className="font-sans text-[10px] text-muted-foreground uppercase tracking-widest hover:text-foreground transition-colors"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Built with ♥ using caffeine.ai
+          </a>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+export default function App() {
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [checkoutSize, setCheckoutSize] = useState<Size>("M");
+
+  const handleSecureYours = (size: Size) => {
+    setCheckoutSize(size);
+    setCheckoutOpen(true);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Toaster position="top-right" />
+
+      <AnimatePresence>
+        {checkoutOpen && (
+          <CheckoutPage
+            size={checkoutSize}
+            onBack={() => setCheckoutOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      <Header />
+      <main>
+        <HeroSection />
+        <MarqueeBand />
+        <DropCountdown onSecureYours={handleSecureYours} />
+        <WatermarkBand />
+        <BrandStatement />
+      </main>
+      <Footer />
+    </div>
+  );
+}
