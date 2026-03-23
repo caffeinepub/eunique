@@ -15,6 +15,7 @@ export default {
     extend: {
       fontFamily: {
         display: ["'Bricolage Grotesque'", "system-ui", "sans-serif"],
+        wordmark: ["'Playfair Display'", "serif"],
         sans: ["'Satoshi'", "system-ui", "sans-serif"],
       },
       colors: {

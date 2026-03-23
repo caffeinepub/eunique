@@ -20,14 +20,7 @@ import {
   useSubscribeNewsletter,
 } from "./hooks/useQueries";
 
-const NAV_LINKS = [
-  "DROPS",
-  "FITS",
-  "COLLABS",
-  "LOOKBOOK",
-  "MANIFESTO",
-  "ABOUT",
-];
+const NAV_LINKS = ["DROPS", "FITS", "COLLABS", "LOOKBOOK", "ABOUT"];
 
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLElement>(null);
@@ -94,12 +87,6 @@ function CountdownBox({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
       className="flex flex-col items-center justify-center border border-border bg-secondary/30 px-2 py-3 md:px-6 md:py-6 flex-1 md:flex-none md:min-w-[110px]"
-      style={{
-        boxShadow: pulse
-          ? "inset 0 0 0 1px oklch(0.72 0.28 305 / 0.5)"
-          : "none",
-        transition: "box-shadow 0.18s ease",
-      }}
       data-ocid="countdown.panel"
     >
       <span
@@ -109,7 +96,6 @@ function CountdownBox({
           transform: pulse ? "scale(1.18)" : "scale(1)",
           transition: "transform 0.18s cubic-bezier(.22,.68,0,1.2)",
           display: "block",
-          color: pulse ? "oklch(0.72 0.28 305)" : undefined,
         }}
       >
         {String(value).padStart(2, "0")}
@@ -149,7 +135,7 @@ function SizeSelector({
         SELECT SIZE
       </span>
       <div className="flex items-center gap-2" data-ocid="size.panel">
-        {(["S", "M", "L", "XL"] as Size[]).map((size) => (
+        {(["S", "M", "L"] as Size[]).map((size) => (
           <button
             key={size}
             type="button"
@@ -160,15 +146,9 @@ function SizeSelector({
               padding: "0.45rem 1.15rem",
               border: "1px solid",
               borderColor:
-                selected === size
-                  ? "oklch(0.72 0.28 305)"
-                  : "oklch(0.25 0.022 285)",
-              background:
-                selected === size ? "oklch(0.72 0.28 305)" : "transparent",
-              color:
-                selected === size
-                  ? "oklch(0.04 0.018 285)"
-                  : "oklch(0.50 0.025 285)",
+                selected === size ? "oklch(0.98 0 0)" : "oklch(0.4 0 0)",
+              background: selected === size ? "oklch(0.98 0 0)" : "transparent",
+              color: selected === size ? "oklch(0.06 0 0)" : "oklch(0.65 0 0)",
               cursor: "pointer",
             }}
             data-ocid="size.toggle"
@@ -181,155 +161,7 @@ function SizeSelector({
   );
 }
 
-/* ─── Policy Page ───────────────────────────────────────────── */
-
-function PolicyPage({ onBack }: { onBack: () => void }) {
-  return (
-    <motion.div
-      key="policy"
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 40 }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed inset-0 z-[200] bg-background overflow-y-auto"
-    >
-      <div className="max-w-2xl mx-auto px-5 py-12 md:py-20 flex flex-col gap-10">
-        <button
-          type="button"
-          onClick={onBack}
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors w-fit"
-          data-ocid="policy.close_button"
-        >
-          <ArrowLeft size={16} strokeWidth={2.5} />
-          <span
-            className="font-display font-bold uppercase tracking-[0.2em]"
-            style={{ fontSize: "0.7rem" }}
-          >
-            BACK
-          </span>
-        </button>
-
-        <div className="flex flex-col gap-2">
-          <span className="sw-tag-ghost" style={{ width: "fit-content" }}>
-            EXCHANGE DOCTRINE
-          </span>
-          <h1
-            className="font-display font-black text-foreground uppercase leading-none mt-4"
-            style={{
-              fontSize: "clamp(2.2rem, 7vw, 5rem)",
-              letterSpacing: "-0.03em",
-            }}
-          >
-            NO RETURNS.
-            <br />
-            <span style={{ color: "oklch(0.72 0.28 305)" }}>ONLY TRADES.</span>
-          </h1>
-          <p className="font-sans text-muted-foreground text-sm leading-relaxed mt-3">
-            We built Sin & Saints on conviction, not convenience. Our pieces are
-            forgiving. Our restock policy isn't.
-          </p>
-        </div>
-
-        <div className="border-t border-border" />
-
-        <div className="flex flex-col gap-4">
-          <h2
-            className="font-display font-black text-foreground uppercase tracking-[0.2em]"
-            style={{ fontSize: "0.75rem" }}
-          >
-            EXCHANGES
-          </h2>
-          <ul className="font-sans text-muted-foreground text-sm leading-relaxed list-none space-y-2">
-            {[
-              "Exchange requests must be raised within 7 days of delivery",
-              "The first exchange is free",
-              "Any additional exchange will include a ₹150 handling fee",
-              "After one exchange, only store credit will be issued",
-            ].map((item) => (
-              <li key={item} className="flex items-start gap-3">
-                <span
-                  className="mt-1.5 inline-block w-1 h-1 rounded-full flex-shrink-0"
-                  style={{ background: "oklch(0.72 0.28 305)" }}
-                />
-                {item}
-              </li>
-            ))}
-          </ul>
-          <p className="font-sans text-muted-foreground text-sm leading-relaxed">
-            If reverse pickup fails twice, the product must be couriered to us
-            by the customer.
-          </p>
-          <p className="font-sans text-muted-foreground text-sm leading-relaxed">
-            Once the product reaches us and passes inspection (typically 8–10
-            days), the replacement will be dispatched.
-          </p>
-        </div>
-
-        <div className="border-t border-border" />
-
-        <div className="flex flex-col gap-4">
-          <h2
-            className="font-display font-black text-foreground uppercase tracking-[0.2em]"
-            style={{ fontSize: "0.75rem" }}
-          >
-            COMMANDMENTS
-          </h2>
-          <ul className="font-sans text-muted-foreground text-sm leading-relaxed list-none space-y-2">
-            {[
-              "Prepaid orders only (No COD available)",
-              "Items must be unused, unworn, and unwashed",
-              "All original tags and packaging must be intact",
-              "Sale / clearance items are not eligible for exchanges",
-            ].map((item) => (
-              <li key={item} className="flex items-start gap-3">
-                <span
-                  className="mt-1.5 inline-block w-1 h-1 rounded-full flex-shrink-0"
-                  style={{ background: "oklch(0.72 0.28 305)" }}
-                />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="border-t border-border" />
-
-        <div className="flex flex-col gap-3">
-          <h2
-            className="font-display font-black text-foreground uppercase tracking-[0.2em]"
-            style={{ fontSize: "0.75rem" }}
-          >
-            CONTACT THE SAINTS
-          </h2>
-          <p className="font-sans text-muted-foreground text-sm">
-            Questions, queries, confessions:
-          </p>
-          <a
-            href="mailto:euniqueclothing.in@gmail.com"
-            className="font-display font-bold text-foreground hover:text-muted-foreground transition-colors text-sm flex items-center gap-2"
-            data-ocid="policy.link"
-          >
-            <Mail size={13} strokeWidth={2} />
-            euniqueclothing.in@gmail.com
-          </a>
-        </div>
-
-        <p
-          className="font-display italic text-muted-foreground leading-relaxed border-l-2 pl-4"
-          style={{
-            fontSize: "0.8rem",
-            borderColor: "oklch(0.72 0.28 305 / 0.4)",
-          }}
-        >
-          Sin & Saints pieces are limited. We recommend checking size details
-          carefully before placing your order.
-        </p>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ─── Shop Drop Page ────────────────────────────────────────────── */
+/* ─── Shop Drop Page ────────────────────────────────────────── */
 
 function ShopDropPage({
   onBack,
@@ -348,7 +180,7 @@ function ShopDropPage({
       exit={{ opacity: 0, y: 60 }}
       transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
       className="fixed inset-0 z-50 overflow-y-auto"
-      style={{ background: "oklch(0.04 0.018 285)" }}
+      style={{ background: "oklch(0.06 0 0)" }}
       data-ocid="shop_drop.modal"
     >
       {/* Back button */}
@@ -365,37 +197,27 @@ function ShopDropPage({
 
       {/* Layout: image left + info right on desktop, stacked on mobile */}
       <div className="min-h-screen flex flex-col lg:flex-row lg:pt-0">
-        {/* Hero image */}
+        {/* Hero image — fills left half on desktop, top 55vh on mobile */}
         <div
-          className="w-full lg:w-1/2 flex-shrink-0 relative"
-          style={{ minHeight: "55vh" }}
+          className="w-full lg:w-1/2 flex-shrink-0"
+          style={{ minHeight: "45vh" }}
         >
           <img
             src="/assets/uploads/IMG_7866-1.PNG"
-            alt="Art Is Alive — Sin & Saints Tee"
+            alt="Art Is Alive — Eunique Tee"
             className="w-full h-full object-cover object-center"
             style={{
-              minHeight: "55vh",
-              filter: "contrast(1.05) brightness(1.02)",
-            }}
-          />
-          {/* Violet side-glow */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "linear-gradient(to right, transparent 65%, oklch(0.04 0.018 285 / 0.9) 100%)",
+              minHeight: "45vh",
+              filter: "grayscale(15%) contrast(1.1)",
             }}
           />
         </div>
 
-        {/* Product info */}
+        {/* Product info — right side */}
         <div className="w-full lg:w-1/2 flex items-center justify-center px-5 sm:px-8 py-10 lg:py-0">
           <div className="max-w-md w-full flex flex-col gap-8">
             {/* Tag */}
-            <span className="sw-tag-ghost" style={{ width: "fit-content" }}>
-              Drop 001 — The Confession Tee
-            </span>
+            <span className="sw-tag">Drop 001 — Limited Edition Tee</span>
 
             {/* Product name */}
             <h1
@@ -407,21 +229,12 @@ function ShopDropPage({
             >
               ART IS
               <br />
-              <span style={{ color: "oklch(0.72 0.28 305)" }}>ALIVE.</span>
+              ALIVE.
             </h1>
-
-            {/* Drop manifesto */}
-            <p
-              className="font-sans text-muted-foreground leading-relaxed"
-              style={{ fontSize: "0.85rem" }}
-            >
-              Wear what the world told you to hide. This tee doesn't ask for
-              permission.
-            </p>
 
             {/* Price */}
             <div className="flex flex-col gap-1.5">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <span
                   className="font-display font-black text-foreground"
                   style={{ fontSize: "2.4rem" }}
@@ -429,12 +242,8 @@ function ShopDropPage({
                   ₹2499
                 </span>
                 <span
-                  className="font-display font-bold uppercase tracking-[0.18em] border px-2 py-0.5"
-                  style={{
-                    fontSize: "0.55rem",
-                    borderColor: "oklch(0.72 0.28 305)",
-                    color: "oklch(0.72 0.28 305)",
-                  }}
+                  className="font-display font-bold text-foreground uppercase tracking-[0.18em] border border-foreground px-2 py-0.5"
+                  style={{ fontSize: "0.55rem" }}
                 >
                   33% OFF
                 </span>
@@ -442,43 +251,80 @@ function ShopDropPage({
               <div className="flex items-center gap-3">
                 <span
                   className="font-display text-muted-foreground line-through"
-                  style={{ fontSize: "0.9rem" }}
+                  style={{ fontSize: "1rem" }}
                 >
                   ₹3699
                 </span>
                 <span
-                  className="font-display font-bold text-muted-foreground uppercase tracking-[0.25em]"
-                  style={{ fontSize: "0.58rem" }}
+                  className="font-display text-muted-foreground uppercase tracking-[0.3em]"
+                  style={{ fontSize: "0.65rem" }}
                 >
-                  LAUNCH PRICE
+                  LAUNCH PRICE · Incl. taxes
                 </span>
               </div>
             </div>
 
             {/* Size selector */}
-            <SizeSelector
-              selected={selectedSize}
-              onSelect={setSelectedSize}
-              visible
-            />
+            <div className="flex flex-col gap-3">
+              <span
+                className="font-display font-bold text-muted-foreground uppercase tracking-[0.35em]"
+                style={{ fontSize: "0.6rem" }}
+              >
+                SELECT SIZE
+              </span>
+              <div
+                className="flex items-center gap-2"
+                data-ocid="shop_drop.size.panel"
+              >
+                {(["S", "M", "L", "XL"] as Size[]).map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => setSelectedSize(size)}
+                    className="font-display font-black uppercase tracking-[0.2em] transition-all duration-150"
+                    style={{
+                      fontSize: "0.75rem",
+                      padding: "0.5rem 1.25rem",
+                      border: "1px solid",
+                      borderColor:
+                        selectedSize === size
+                          ? "oklch(0.98 0 0)"
+                          : "oklch(0.4 0 0)",
+                      background:
+                        selectedSize === size
+                          ? "oklch(0.98 0 0)"
+                          : "transparent",
+                      color:
+                        selectedSize === size
+                          ? "oklch(0.06 0 0)"
+                          : "oklch(0.65 0 0)",
+                      cursor: "pointer",
+                    }}
+                    data-ocid="shop_drop.size.toggle"
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {/* CTA */}
-            <button
-              type="button"
-              className="btn-primary w-full justify-center"
-              onClick={() => onSecureYours(selectedSize)}
-              data-ocid="shop_drop.primary_button"
-            >
-              CLAIM YOUR DROP — SIZE {selectedSize}{" "}
-              <ArrowRight size={14} strokeWidth={2.5} />
-            </button>
-
-            <span
-              className="font-display font-bold text-muted-foreground uppercase tracking-[0.25em]"
-              style={{ fontSize: "0.58rem" }}
-            >
-              No restock. No grace. Just yours.
-            </span>
+            <div className="flex flex-col gap-3">
+              <button
+                type="button"
+                className="btn-primary w-full justify-center"
+                onClick={() => onSecureYours(selectedSize)}
+                data-ocid="shop_drop.primary_button"
+              >
+                SECURE YOURS <ArrowRight size={14} strokeWidth={2.5} />
+              </button>
+              <p
+                className="text-muted-foreground font-display uppercase tracking-[0.25em] text-center"
+                style={{ fontSize: "0.65rem" }}
+              >
+                Limited run. No restock. Ever.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -486,7 +332,160 @@ function ShopDropPage({
   );
 }
 
-/* ─── Checkout Page ────────────────────────────────────────────── */
+/* ─── Policy Page ───────────────────────────────────────────── */
+
+function PolicyPage({ onBack }: { onBack: () => void }) {
+  return (
+    <motion.div
+      key="policy"
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 40 }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed inset-0 z-[100] bg-background overflow-y-auto"
+      data-ocid="policy.modal"
+    >
+      {/* Top Bar */}
+      <div className="sticky top-0 z-10 bg-background border-b border-border flex items-center justify-between px-5 h-14">
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          data-ocid="policy.close_button"
+        >
+          <ArrowLeft size={16} strokeWidth={2.5} />
+          <span className="font-display font-bold text-[10px] tracking-[0.25em] uppercase">
+            BACK
+          </span>
+        </button>
+        <span className="font-display font-black text-foreground text-lg uppercase tracking-tight">
+          EUNIQUE
+        </span>
+        <div className="w-16" />
+      </div>
+
+      <div className="max-w-[720px] mx-auto px-5 py-14 md:py-20 flex flex-col gap-10">
+        {/* Top note */}
+        <p
+          className="font-display italic text-muted-foreground leading-relaxed border-l-2 border-border pl-4"
+          style={{ fontSize: "0.8rem" }}
+        >
+          Eunique pieces are limited. We recommend checking size details
+          carefully before placing your order.
+        </p>
+
+        {/* Page Title */}
+        <div className="flex flex-col gap-3">
+          <h1
+            className="font-display font-black text-foreground uppercase leading-none"
+            style={{
+              fontSize: "clamp(2rem, 7vw, 4.5rem)",
+              letterSpacing: "-0.03em",
+            }}
+          >
+            EXCHANGE
+            <br />
+            POLICY
+          </h1>
+          <p className="font-sans text-muted-foreground text-sm leading-relaxed">
+            At Eunique, every piece is made with intent. If something doesn't
+            feel right, we offer exchanges — no returns at this time.
+          </p>
+        </div>
+
+        {/* EXCHANGES */}
+        <div className="flex flex-col gap-4">
+          <h2
+            className="font-display font-black text-foreground uppercase tracking-[0.2em]"
+            style={{ fontSize: "0.75rem" }}
+          >
+            EXCHANGES
+          </h2>
+          <ul className="font-sans text-muted-foreground text-sm leading-relaxed list-none space-y-2">
+            {[
+              "Exchange requests must be raised within 7 days of delivery",
+              "The first exchange is free",
+              "Any additional exchange will include a ₹150 handling fee",
+              "After one exchange, only store credit will be issued",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-3">
+                <span className="mt-1.5 inline-block w-1 h-1 rounded-full bg-foreground flex-shrink-0" />
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p className="font-sans text-muted-foreground text-sm leading-relaxed">
+            If reverse pickup fails twice, the product must be couriered to us
+            by the customer.
+          </p>
+          <p className="font-sans text-muted-foreground text-sm leading-relaxed">
+            Once the product reaches us and passes inspection (typically 8–10
+            days), the replacement will be dispatched.
+          </p>
+        </div>
+
+        <div className="border-t border-border" />
+
+        {/* IMPORTANT */}
+        <div className="flex flex-col gap-4">
+          <h2
+            className="font-display font-black text-foreground uppercase tracking-[0.2em]"
+            style={{ fontSize: "0.75rem" }}
+          >
+            IMPORTANT
+          </h2>
+          <ul className="font-sans text-muted-foreground text-sm leading-relaxed list-none space-y-2">
+            {[
+              "Prepaid orders only (No COD available)",
+              "Items must be unused, unworn, and unwashed",
+              "All original tags and packaging must be intact",
+              "Sale / clearance items are not eligible for exchanges",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-3">
+                <span className="mt-1.5 inline-block w-1 h-1 rounded-full bg-foreground flex-shrink-0" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="border-t border-border" />
+
+        {/* CONTACT */}
+        <div className="flex flex-col gap-3">
+          <h2
+            className="font-display font-black text-foreground uppercase tracking-[0.2em]"
+            style={{ fontSize: "0.75rem" }}
+          >
+            CONTACT
+          </h2>
+          <p className="font-sans text-muted-foreground text-sm">
+            For any queries or support:
+          </p>
+          <a
+            href="mailto:euniqueclothing.in@gmail.com"
+            className="font-display font-bold text-foreground hover:text-muted-foreground transition-colors text-sm flex items-center gap-2"
+            data-ocid="policy.link"
+          >
+            <Mail size={13} strokeWidth={2} />
+            euniqueclothing.in@gmail.com
+          </a>
+        </div>
+
+        {/* Bottom note */}
+        <p
+          className="font-display italic text-muted-foreground leading-relaxed border-l-2 border-border pl-4"
+          style={{ fontSize: "0.8rem" }}
+        >
+          Eunique pieces are limited. We recommend checking size details
+          carefully before placing your order.
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─── Checkout Page ─────────────────────────────────────────── */
 
 function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
   const [copied, setCopied] = useState(false);
@@ -524,11 +523,11 @@ function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
             BACK
           </span>
         </button>
-        <span className="font-wordmark font-black text-foreground text-base tracking-normal">
-          SIN <span style={{ color: "oklch(0.72 0.28 305)" }}>&#38;</span>{" "}
-          SAINTS
+        <span className="font-display font-black text-foreground text-lg uppercase tracking-tight">
+          EUNIQUE
         </span>
         <div className="w-16" />
+        {/* spacer */}
       </div>
 
       <AnimatePresence mode="wait">
@@ -544,12 +543,12 @@ function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
             data-ocid="checkout.success_state"
           >
             <div className="flex flex-col items-center gap-6 max-w-md">
-              {/* Pulsing violet dot */}
+              {/* Pulsing red dot */}
               <span
-                className="inline-block w-3 h-3 rounded-full"
+                className="inline-block w-3 h-3 rounded-full bg-red-500"
                 style={{
-                  background: "oklch(0.72 0.28 305)",
-                  animation: "pulse-violet 1.4s ease-in-out infinite",
+                  boxShadow: "0 0 12px 3px rgba(239,68,68,0.7)",
+                  animation: "pulse-red 1.4s ease-in-out infinite",
                 }}
               />
               <h2
@@ -559,14 +558,14 @@ function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
                   letterSpacing: "-0.03em",
                 }}
               >
-                THE DROP
+                ORDER
                 <br />
-                <span style={{ color: "oklch(0.72 0.28 305)" }}>IS YOURS.</span>
+                RECEIVED.
               </h2>
               <p className="font-sans text-muted-foreground text-sm leading-relaxed">
                 We'll confirm your drop on WhatsApp or email shortly.
                 <br />
-                <strong className="text-foreground">Stay locked in.</strong>
+                <strong className="text-foreground">Stay locked.</strong>
               </p>
               <div className="border border-border px-6 py-4 flex flex-col gap-1 w-full">
                 <span
@@ -582,7 +581,7 @@ function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
                   className="font-display font-bold text-muted-foreground uppercase tracking-[0.25em]"
                   style={{ fontSize: "0.6rem" }}
                 >
-                  DROP 001 — THE CONFESSION TEE
+                  DROP 001 — LIMITED EDITION
                 </span>
               </div>
               <button
@@ -626,7 +625,7 @@ function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
                     alt="Art Is Alive Tee"
                     className="w-full h-full object-cover"
                     style={{
-                      filter: "brightness(1.05) contrast(1.05)",
+                      filter: "grayscale(30%) brightness(1.1) contrast(1.1)",
                       backgroundColor: "#fff",
                     }}
                   />
@@ -638,11 +637,8 @@ function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
                   >
                     ART IS ALIVE TEE
                   </span>
-                  <span
-                    className="sw-tag-ghost"
-                    style={{ fontSize: "0.55rem" }}
-                  >
-                    DROP 001 — THE CONFESSION TEE
+                  <span className="sw-tag" style={{ fontSize: "0.55rem" }}>
+                    DROP 001 — LIMITED EDITION
                   </span>
                   <div className="flex flex-col gap-1 mt-2">
                     <span
@@ -656,9 +652,7 @@ function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
                         ? "SMALL"
                         : size === "M"
                           ? "MEDIUM"
-                          : size === "L"
-                            ? "LARGE"
-                            : "X-LARGE"}
+                          : "LARGE"}
                     </span>
                   </div>
                   <div className="flex flex-col gap-0.5 mt-1">
@@ -679,11 +673,13 @@ function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
                 className="font-display font-bold text-muted-foreground uppercase tracking-[0.25em]"
                 style={{ fontSize: "0.58rem" }}
               >
-                Limited run. No restock. No grace. Just yours.
+                Limited run. No restock. Ever.
               </p>
 
+              {/* Divider */}
               <div className="border-t border-border" />
 
+              {/* Total */}
               <div className="flex items-center justify-between">
                 <span
                   className="font-display font-bold text-muted-foreground uppercase tracking-[0.3em]"
@@ -766,14 +762,11 @@ function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
                         <Check
                           size={14}
                           strokeWidth={2.5}
-                          style={{ color: "oklch(0.72 0.28 305)" }}
+                          className="text-green-400"
                         />
                         <span
-                          className="font-display font-bold uppercase tracking-[0.2em]"
-                          style={{
-                            fontSize: "0.6rem",
-                            color: "oklch(0.72 0.28 305)",
-                          }}
+                          className="font-display font-bold text-green-400 uppercase tracking-[0.2em]"
+                          style={{ fontSize: "0.6rem" }}
                         >
                           COPIED!
                         </span>
@@ -864,7 +857,7 @@ function CheckoutPage({ size, onBack }: { size: Size; onBack: () => void }) {
   );
 }
 
-/* ─── Drop Countdown ────────────────────────────────────────────── */
+/* ─── Drop Countdown ────────────────────────────────────────── */
 
 function DropCountdown({
   onSecureYours,
@@ -884,12 +877,12 @@ function DropCountdown({
       aria-label="Limited Edition Drop Countdown"
       data-ocid="countdown.section"
     >
-      {/* Violet radial glow */}
+      {/* Subtle noise-like grid overlay */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse 60% 70% at 80% 50%, oklch(0.72 0.28 305 / 0.07) 0%, transparent 70%)",
+            "radial-gradient(circle at 70% 40%, oklch(0.12 0 0) 0%, transparent 65%)",
           zIndex: 0,
         }}
       />
@@ -905,29 +898,32 @@ function DropCountdown({
         >
           <img
             src="/assets/uploads/IMG_7860-2-1.PNG"
-            alt="Sin & Saints Drop 001 — Art Is Alive Tee"
+            alt="Eunique Drop 001 — Limited Edition Tee"
             className="absolute inset-0 w-full h-full object-cover"
             style={{
-              filter: "contrast(1.08) brightness(0.98)",
+              filter: "grayscale(0%) brightness(1) contrast(1.05)",
               backgroundColor: "#fff",
             }}
           />
+          {/* Edge vignette */}
           <div
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(to right, rgba(5,3,20,0.05) 0%, transparent 30%, rgba(5,3,20,0.65) 100%)",
+                "linear-gradient(to right, rgba(0,0,0,0.1) 0%, transparent 30%, rgba(0,0,0,0.55) 100%)",
             }}
           />
+          {/* Mobile overlay top tag */}
           <div className="absolute top-6 left-6 lg:hidden">
             <span className="sw-tag" style={{ fontSize: "0.6rem" }}>
-              DROP 001 — THE CONFESSION TEE
+              DROP 001 — LIMITED EDITION
             </span>
           </div>
         </div>
 
         {/* RIGHT — Content */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center px-5 py-8 md:py-14 md:px-14 lg:px-16 xl:px-20 gap-3 md:gap-4 lg:gap-6">
+          {/* Desktop tag */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={visible ? { opacity: 1, y: 0 } : {}}
@@ -955,7 +951,7 @@ function DropCountdown({
           >
             ART IS
             <br />
-            <span style={{ color: "oklch(0.72 0.28 305)" }}>ALIVE.</span>
+            ALIVE.
           </motion.h2>
 
           {/* Sub-headline */}
@@ -966,7 +962,7 @@ function DropCountdown({
             className="font-display font-bold text-muted-foreground uppercase tracking-[0.28em]"
             style={{ fontSize: "0.65rem" }}
           >
-            ONE TEE. ONE TRUTH. NO FORGIVENESS.
+            ONE TEE. ONE DROP. NO RESTOCK.
           </motion.p>
 
           {/* Brand Story Excerpt */}
@@ -974,14 +970,12 @@ function DropCountdown({
             initial={{ opacity: 0 }}
             animate={visible ? { opacity: 1 } : {}}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="border-l-2 pl-4 italic text-muted-foreground leading-relaxed"
-            style={{
-              fontSize: "0.72rem",
-              borderColor: "oklch(0.72 0.28 305 / 0.5)",
-            }}
+            className="border-l-2 border-border pl-4 italic text-muted-foreground leading-relaxed"
+            style={{ fontSize: "0.72rem" }}
           >
-            "We weren't born to be saints. We were born to be real. This isn't a
-            tee. It's a statement of existence."
+            "Eunique wasn't built to fit in. Every drop is limited — not to
+            create hype, but because not everyone deserves it. This isn't fast
+            fashion. This is identity."
           </motion.blockquote>
 
           {/* Size Selector */}
@@ -1004,7 +998,7 @@ function DropCountdown({
             <CountdownBox value={sec} label="SEC" delay={0.81} />
           </motion.div>
 
-          {/* Live indicator */}
+          {/* Live indicator + urgency */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={visible ? { opacity: 1 } : {}}
@@ -1012,23 +1006,23 @@ function DropCountdown({
             className="flex items-center gap-3"
           >
             <span
-              className="inline-block w-2 h-2 rounded-full"
+              className="inline-block w-2 h-2 rounded-full bg-red-500"
               style={{
-                background: "oklch(0.72 0.28 305)",
-                animation: "pulse-violet 1.4s ease-in-out infinite",
+                boxShadow: "0 0 8px 2px rgba(239,68,68,0.7)",
+                animation: "pulse-red 1.4s ease-in-out infinite",
               }}
             />
             <span
               className="font-display font-bold text-muted-foreground uppercase tracking-[0.25em]"
               style={{ fontSize: "0.6rem" }}
             >
-              BEFORE THE GATES CLOSE
+              LIVE IN
             </span>
             <span
-              className="font-display font-bold uppercase tracking-[0.18em]"
-              style={{ fontSize: "0.6rem", color: "oklch(0.72 0.28 305)" }}
+              className="font-display font-bold text-foreground uppercase tracking-[0.18em]"
+              style={{ fontSize: "0.6rem" }}
             >
-              — Only the chosen get it.
+              — Only a few will get it.
             </span>
           </motion.div>
 
@@ -1045,14 +1039,14 @@ function DropCountdown({
               onClick={() => onSecureYours(selectedSize)}
               data-ocid="countdown.primary_button"
             >
-              CLAIM YOUR DROP — SIZE {selectedSize}{" "}
+              SECURE YOURS — SIZE {selectedSize}{" "}
               <ArrowRight size={14} strokeWidth={2.5} />
             </button>
             <span
               className="font-display font-bold text-muted-foreground uppercase tracking-[0.25em]"
               style={{ fontSize: "0.6rem" }}
             >
-              No restock. No grace. Just yours.
+              Limited run. No restock. Ever.
             </span>
           </motion.div>
         </div>
@@ -1069,489 +1063,17 @@ function DropCountdown({
             fontSize: "0.55rem",
             letterSpacing: "0.3em",
             writingMode: "vertical-rl",
-            opacity: 0.3,
+            opacity: 0.35,
           }}
         >
-          DROP 001 ✕ SIN & SAINTS ✕ 2026
+          DROP 001 ✦ EUNIQUE ✦ 2026
         </div>
       </div>
     </section>
   );
 }
 
-/* ─── Manifesto Page ────────────────────────────────────────────── */
-
-function ManifestoPage({
-  onBack,
-  onShopDrop,
-}: {
-  onBack: () => void;
-  onShopDrop: () => void;
-}) {
-  return (
-    <motion.div
-      key="manifesto"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed inset-0 z-50 overflow-y-auto"
-      style={{ background: "oklch(0.03 0.025 285)" }}
-      data-ocid="manifesto.modal"
-    >
-      {/* Close button */}
-      <button
-        type="button"
-        onClick={onBack}
-        className="fixed top-5 right-5 z-[60] flex items-center gap-2 font-display font-bold uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground transition-colors"
-        style={{ fontSize: "0.65rem" }}
-        data-ocid="manifesto.close_button"
-      >
-        <X size={16} strokeWidth={2.5} />
-        CLOSE
-      </button>
-
-      {/* Section 1 — Opening Statement */}
-      <section
-        className="relative flex flex-col items-center justify-center text-center px-6"
-        style={{
-          minHeight: "100svh",
-          background:
-            "radial-gradient(ellipse 90% 60% at 50% 40%, oklch(0.72 0.28 305 / 0.06) 0%, transparent 70%)",
-        }}
-      >
-        <motion.span
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="font-display font-bold text-muted-foreground uppercase tracking-[0.5em] block mb-8"
-          style={{ fontSize: "0.6rem" }}
-        >
-          SIN ✦ & ✦ SAINTS — A CREED FOR THE CONTRADICTED
-        </motion.span>
-        <motion.h1
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.4 }}
-          className="font-display font-black text-foreground uppercase leading-none mb-10"
-          style={{
-            fontSize: "clamp(3rem, 14vw, 14rem)",
-            letterSpacing: "-0.03em",
-          }}
-        >
-          WE DON&apos;T
-          <br />
-          FOLLOW.
-          <br />
-          <span style={{ color: "oklch(0.72 0.28 305)" }}>WE HAUNT.</span>
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
-          className="font-sans text-muted-foreground max-w-md leading-relaxed"
-          style={{ fontSize: "0.88rem" }}
-        >
-          Every thread is a tension. Every stitch is a choice. This is not
-          clothing for those who want to fit in.
-        </motion.p>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-          className="mt-12 flex flex-col items-center gap-2"
-        >
-          <div
-            className="w-px h-12 md:h-20"
-            style={{ background: "oklch(0.72 0.28 305 / 0.4)" }}
-          />
-          <span
-            className="font-display font-bold text-muted-foreground uppercase tracking-[0.3em]"
-            style={{ fontSize: "0.55rem" }}
-          >
-            SCROLL TO READ
-          </span>
-        </motion.div>
-      </section>
-
-      {/* Section 2 — The Duality */}
-      <section
-        className="relative px-6 py-28 md:py-40 max-w-4xl mx-auto"
-        style={{ borderTop: "1px solid oklch(0.72 0.28 305 / 0.12)" }}
-      >
-        <div className="grid md:grid-cols-2 gap-16 md:gap-24 items-start">
-          <div className="flex flex-col gap-6">
-            <span
-              className="font-display font-bold uppercase tracking-[0.5em]"
-              style={{ color: "oklch(0.72 0.28 305)", fontSize: "0.55rem" }}
-            >
-              THE SIN SIDE
-            </span>
-            <h2
-              className="font-display font-black text-foreground uppercase leading-none"
-              style={{
-                fontSize: "clamp(2rem, 6vw, 5rem)",
-                letterSpacing: "-0.03em",
-              }}
-            >
-              SIN IS
-              <br />
-              THE INK.
-            </h2>
-            <p
-              className="font-sans text-muted-foreground leading-relaxed"
-              style={{ fontSize: "0.85rem" }}
-            >
-              The hunger. The rawness. The part of you that refuses to
-              apologize. The impulse that drives creation, the fire that burns
-              down every rule written by someone afraid of you.
-            </p>
-            <blockquote
-              className="border-l-2 pl-5 italic text-muted-foreground leading-relaxed"
-              style={{
-                fontSize: "0.8rem",
-                borderColor: "oklch(0.72 0.28 305 / 0.6)",
-              }}
-            >
-              &quot;Wear what the world told you to hide.&quot;
-            </blockquote>
-          </div>
-          <div className="flex flex-col gap-6 md:pt-20">
-            <span
-              className="font-display font-bold uppercase tracking-[0.5em] text-muted-foreground"
-              style={{ fontSize: "0.55rem" }}
-            >
-              THE SAINTS SIDE
-            </span>
-            <h2
-              className="font-display font-black text-foreground uppercase leading-none"
-              style={{
-                fontSize: "clamp(2rem, 6vw, 5rem)",
-                letterSpacing: "-0.03em",
-              }}
-            >
-              SAINTS IS
-              <br />
-              THE PAGE.
-            </h2>
-            <p
-              className="font-sans text-muted-foreground leading-relaxed"
-              style={{ fontSize: "0.85rem" }}
-            >
-              The grace. The craft. The elevation of every dark impulse into
-              something beautiful. The discipline that transforms rebellion into
-              art that lasts longer than trends.
-            </p>
-            <blockquote
-              className="border-l-2 pl-5 italic text-muted-foreground leading-relaxed"
-              style={{
-                fontSize: "0.8rem",
-                borderColor: "oklch(0.9 0.02 285 / 0.3)",
-              }}
-            >
-              &quot;Born in the contradiction. Worn in the truth.&quot;
-            </blockquote>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 3 — The Creed */}
-      <section
-        className="relative px-6 py-28 md:py-40 text-center"
-        style={{
-          background: "oklch(0.05 0.03 285)",
-          borderTop: "1px solid oklch(0.72 0.28 305 / 0.12)",
-          borderBottom: "1px solid oklch(0.72 0.28 305 / 0.12)",
-        }}
-      >
-        <div className="max-w-3xl mx-auto flex flex-col gap-16">
-          {[
-            { line: "We were not made for the middle.", accent: false },
-            { line: "We were made for the edge.", accent: true },
-            { line: "The altar is a stage.", accent: false },
-            { line: "The abyss is our archive.", accent: true },
-            { line: "We dress the damned and the divine.", accent: false },
-            { line: "In the same breath.", accent: true },
-          ].map(({ line, accent }, i) => (
-            <motion.p
-              key={line}
-              initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="font-display font-black uppercase leading-none"
-              style={{
-                fontSize: "clamp(1.6rem, 5vw, 4.5rem)",
-                letterSpacing: "-0.02em",
-                color: accent ? "oklch(0.72 0.28 305)" : "oklch(0.92 0.01 285)",
-              }}
-            >
-              {line}
-            </motion.p>
-          ))}
-        </div>
-      </section>
-
-      {/* Section 4 — The Statement + CTA */}
-      <section
-        className="relative flex flex-col items-center justify-center text-center px-6 py-32 md:py-48"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 60% at 50% 50%, oklch(0.72 0.28 305 / 0.07) 0%, transparent 70%)",
-        }}
-      >
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.9 }}
-          className="font-display font-black text-foreground uppercase leading-none mb-12"
-          style={{
-            fontSize: "clamp(2rem, 8vw, 9rem)",
-            letterSpacing: "-0.03em",
-            maxWidth: "900px",
-          }}
-        >
-          GOD FEARS
-          <br />
-          <span style={{ color: "oklch(0.72 0.28 305)" }}>THE FEARLESS.</span>
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="font-sans text-muted-foreground max-w-sm leading-relaxed mb-12"
-          style={{ fontSize: "0.88rem" }}
-        >
-          One drop. One tee. No restock. No grace. The Art Is Alive tee exists
-          for those who have already chosen their side.
-        </motion.p>
-        <div className="flex flex-col sm:flex-row gap-4 items-center">
-          <button
-            type="button"
-            onClick={() => {
-              onBack();
-              onShopDrop();
-            }}
-            className="btn-primary"
-            data-ocid="manifesto.primary_button"
-          >
-            SHOP THE DROP <ArrowRight size={14} strokeWidth={2.5} />
-          </button>
-          <button
-            type="button"
-            onClick={onBack}
-            className="btn-ghost"
-            data-ocid="manifesto.cancel_button"
-          >
-            BACK TO SITE
-          </button>
-        </div>
-      </section>
-    </motion.div>
-  );
-}
-
-/* ─── Lookbook Section ──────────────────────────────────────────── */
-
-function LookbookSection() {
-  const { ref, visible } = useInView(0.08);
-  return (
-    <section
-      ref={ref as React.RefObject<HTMLElement>}
-      className="relative py-20 md:py-32 border-t border-border overflow-hidden"
-      data-ocid="lookbook.section"
-    >
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 80% at 30% 60%, oklch(0.72 0.28 305 / 0.04) 0%, transparent 60%)",
-        }}
-      />
-      <div className="relative z-10 max-w-[1280px] mx-auto px-5">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={visible ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className="mb-14 md:mb-20"
-        >
-          <span
-            className="font-display font-bold text-muted-foreground uppercase tracking-[0.5em] block mb-4"
-            style={{ fontSize: "0.58rem" }}
-          >
-            DROP 001 — 2026
-          </span>
-          <h2
-            className="font-display font-black text-foreground uppercase leading-none"
-            style={{
-              fontSize: "clamp(2.5rem, 9vw, 8rem)",
-              letterSpacing: "-0.03em",
-            }}
-          >
-            THE <span style={{ color: "oklch(0.72 0.28 305)" }}>LOOKBOOK</span>
-          </h2>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
-          {/* Left — large portrait */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={visible ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.9, delay: 0.1 }}
-            className="md:col-span-7 relative group overflow-hidden"
-            style={{ aspectRatio: "3/4" }}
-            data-ocid="lookbook.item.1"
-          >
-            <img
-              src="/assets/uploads/IMG_7860-2-1.PNG"
-              alt="Art Is Alive — Sin & Saints Drop 001"
-              className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
-              style={{ filter: "contrast(1.05)", backgroundColor: "#f5f5f0" }}
-            />
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(to top, oklch(0.04 0.02 285 / 0.92) 0%, transparent 45%)",
-              }}
-            />
-            <div className="absolute bottom-0 left-0 p-6 md:p-8 flex flex-col gap-2">
-              <span
-                className="font-display font-bold uppercase tracking-[0.4em] text-foreground/60"
-                style={{ fontSize: "0.55rem" }}
-              >
-                SIN & SAINTS ✦ 2026
-              </span>
-              <h3
-                className="font-display font-black text-foreground uppercase leading-none"
-                style={{
-                  fontSize: "clamp(1.8rem, 4vw, 3.5rem)",
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                ART IS{" "}
-                <span style={{ color: "oklch(0.72 0.28 305)" }}>ALIVE.</span>
-              </h3>
-              <span
-                className="font-display font-bold text-muted-foreground uppercase tracking-[0.3em]"
-                style={{ fontSize: "0.6rem" }}
-              >
-                DROP 001
-              </span>
-            </div>
-          </motion.div>
-
-          {/* Right column */}
-          <div className="md:col-span-5 flex flex-col gap-4 md:gap-6">
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={visible ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.25 }}
-              className="relative overflow-hidden border border-border p-8 md:p-10 flex flex-col justify-between"
-              style={{ background: "oklch(0.06 0.03 285)", minHeight: "220px" }}
-            >
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background:
-                    "radial-gradient(ellipse 80% 80% at 100% 0%, oklch(0.72 0.28 305 / 0.08) 0%, transparent 60%)",
-                }}
-              />
-              <span
-                className="font-display font-bold uppercase tracking-[0.5em] text-muted-foreground relative z-10"
-                style={{ fontSize: "0.55rem" }}
-              >
-                THE CONFESSION TEE
-              </span>
-              <div className="relative z-10 mt-auto">
-                <p
-                  className="font-display font-black text-foreground uppercase leading-none"
-                  style={{
-                    fontSize: "clamp(1.4rem, 3.5vw, 2.8rem)",
-                    letterSpacing: "-0.025em",
-                  }}
-                >
-                  WEAR YOUR
-                  <br />
-                  <span style={{ color: "oklch(0.72 0.28 305)" }}>
-                    CONTRADICTION.
-                  </span>
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={visible ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.9, delay: 0.38 }}
-              className="relative group overflow-hidden flex-1"
-              style={{ minHeight: "300px" }}
-              data-ocid="lookbook.item.2"
-            >
-              <img
-                src="/assets/uploads/IMG_7866-1.PNG"
-                alt="Art Is Alive — Drop 001 Editorial"
-                className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
-                style={{ filter: "contrast(1.05)", backgroundColor: "#f5f5f0" }}
-              />
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background:
-                    "linear-gradient(to top, oklch(0.04 0.02 285 / 0.88) 0%, transparent 50%)",
-                }}
-              />
-              <div className="absolute bottom-0 left-0 p-5 md:p-6">
-                <span
-                  className="font-display font-bold uppercase tracking-[0.4em] text-foreground/60 block mb-1.5"
-                  style={{ fontSize: "0.52rem" }}
-                >
-                  EDITORIAL
-                </span>
-                <p
-                  className="font-display font-black text-foreground uppercase leading-none"
-                  style={{
-                    fontSize: "clamp(1.2rem, 2.5vw, 2rem)",
-                    letterSpacing: "-0.02em",
-                  }}
-                >
-                  NO RESTOCK.{" "}
-                  <span style={{ color: "oklch(0.72 0.28 305)" }}>
-                    NO GRACE.
-                  </span>
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={visible ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.55 }}
-          className="mt-10 md:mt-14 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 border-t border-border pt-8"
-        >
-          <p
-            className="font-display font-bold text-muted-foreground uppercase tracking-[0.3em]"
-            style={{ fontSize: "0.6rem" }}
-          >
-            SIN & SAINTS ✦ DROP 001 ✦ LIMITED EDITION ✦ 2026
-          </p>
-          <p
-            className="font-sans text-muted-foreground italic"
-            style={{ fontSize: "0.78rem" }}
-          >
-            One tee. One truth. The rest is silence.
-          </p>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-function Header({ onManifesto }: { onManifesto: () => void }) {
+function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   useEffect(() => {
@@ -1563,46 +1085,26 @@ function Header({ onManifesto }: { onManifesto: () => void }) {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
-        scrolled
-          ? "bg-background/95 backdrop-blur-sm border-b border-border"
-          : "bg-transparent"
+        scrolled ? "bg-background border-b border-border" : "bg-transparent"
       }`}
     >
       <div className="max-w-[1280px] mx-auto px-5 h-14 flex items-center justify-between">
         {/* Logo */}
         <a
           href="/"
-          className="font-wordmark text-foreground font-black text-2xl tracking-normal select-none"
+          className="font-display text-foreground font-black text-xl tracking-[-0.02em] uppercase select-none"
           data-ocid="header.link"
         >
-          SIN <span style={{ color: "oklch(0.72 0.28 305)" }}>&#38;</span>{" "}
-          SAINTS
+          EUNIQUE
         </a>
 
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-7">
-          {NAV_LINKS.map((l) =>
-            l === "MANIFESTO" ? (
-              <button
-                key={l}
-                type="button"
-                onClick={onManifesto}
-                className="nav-link"
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                }}
-                data-ocid="header.link"
-              >
-                {l}
-              </button>
-            ) : (
-              <a key={l} href="/" className="nav-link" data-ocid="header.link">
-                {l}
-              </a>
-            ),
-          )}
+          {NAV_LINKS.map((l) => (
+            <a key={l} href="/" className="nav-link" data-ocid="header.link">
+              {l}
+            </a>
+          ))}
         </nav>
 
         {/* Actions */}
@@ -1644,38 +1146,17 @@ function Header({ onManifesto }: { onManifesto: () => void }) {
             className="lg:hidden bg-background border-t border-border overflow-hidden"
           >
             <nav className="flex flex-col px-5 py-6 gap-5">
-              {NAV_LINKS.map((l) =>
-                l === "MANIFESTO" ? (
-                  <button
-                    key={l}
-                    type="button"
-                    onClick={() => {
-                      setMobileOpen(false);
-                      onManifesto();
-                    }}
-                    className="nav-link text-base"
-                    style={{
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      textAlign: "left",
-                    }}
-                    data-ocid="header.link"
-                  >
-                    {l}
-                  </button>
-                ) : (
-                  <a
-                    key={l}
-                    href="/"
-                    className="nav-link text-base"
-                    onClick={() => setMobileOpen(false)}
-                    data-ocid="header.link"
-                  >
-                    {l}
-                  </a>
-                ),
-              )}
+              {NAV_LINKS.map((l) => (
+                <a
+                  key={l}
+                  href="/"
+                  className="nav-link text-base"
+                  onClick={() => setMobileOpen(false)}
+                  data-ocid="header.link"
+                >
+                  {l}
+                </a>
+              ))}
               <div className="pt-4 border-t border-border">
                 <button
                   type="button"
@@ -1701,25 +1182,18 @@ function HeroSection({ onShopDrop }: { onShopDrop?: () => void }) {
       aria-label="Hero"
     >
       <img
-        src="/assets/generated/hero-sin-saints.dim_1400x900.jpg"
-        alt="SIN & SAINTS — Wear Your Contradiction."
+        src="/assets/generated/sw-hero.dim_1400x900.jpg"
+        alt="EUNIQUE — No Rules. Just Fits."
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ filter: "brightness(0.38) contrast(1.2)" }}
+        style={{ filter: "brightness(0.45) contrast(1.15)" }}
       />
 
-      {/* Violet tint overlay */}
+      {/* Overlay noise texture via CSS */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(135deg, oklch(0.04 0.018 285 / 0.7) 0%, transparent 45%, oklch(0.72 0.28 305 / 0.08) 100%)",
-        }}
-      />
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(to bottom, transparent 0%, rgba(5,3,20,0.15) 50%, rgba(5,3,20,0.92) 100%)",
+            "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.85) 100%)",
         }}
       />
 
@@ -1734,7 +1208,7 @@ function HeroSection({ onShopDrop }: { onShopDrop?: () => void }) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-5"
+            className="mb-4"
           >
             <span className="sw-tag">DROP 01 — 2026</span>
           </motion.div>
@@ -1744,36 +1218,23 @@ function HeroSection({ onShopDrop }: { onShopDrop?: () => void }) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.25 }}
-            className="font-display font-black text-foreground uppercase leading-none tracking-tight mb-3"
+            className="font-display font-black text-foreground uppercase leading-none tracking-tight mb-6"
             style={{
               fontSize: "clamp(2.4rem, 12vw, 11rem)",
               letterSpacing: "-0.02em",
             }}
           >
-            WEAR YOUR
+            NO RULES.
             <br />
-            <span style={{ color: "oklch(0.72 0.28 305)" }}>
-              CONTRADICTION.
-            </span>
+            JUST FITS.
           </motion.h1>
-
-          {/* Sub */}
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.45 }}
-            className="font-sans text-muted-foreground mb-8 max-w-md"
-            style={{ fontSize: "0.88rem", letterSpacing: "0.02em" }}
-          >
-            For those who pray in daylight and sin by night.
-          </motion.p>
 
           {/* Sub + CTA row */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.6 }}
-            className="flex flex-col sm:flex-row items-start sm:items-center gap-4"
+            transition={{ duration: 0.7, delay: 0.55 }}
+            className="flex flex-col sm:flex-row items-start sm:items-center gap-5"
           >
             <button
               type="button"
@@ -1788,7 +1249,7 @@ function HeroSection({ onShopDrop }: { onShopDrop?: () => void }) {
               className="btn-ghost"
               data-ocid="hero.secondary_button"
             >
-              OUR STORY
+              VIEW ALL FITS
             </button>
           </motion.div>
         </div>
@@ -1805,10 +1266,10 @@ function HeroSection({ onShopDrop }: { onShopDrop?: () => void }) {
             fontSize: "0.6rem",
             letterSpacing: "0.35em",
             writingMode: "vertical-rl",
-            opacity: 0.35,
+            opacity: 0.4,
           }}
         >
-          SIN & SAINTS — STREETWEAR — 2026
+          EUNIQUE — STREETWEAR — 2026
         </div>
       </div>
     </section>
@@ -1818,23 +1279,17 @@ function HeroSection({ onShopDrop }: { onShopDrop?: () => void }) {
 function MarqueeBand() {
   return (
     <section
-      className="relative overflow-hidden py-3 select-none"
-      style={{ background: "oklch(0.72 0.28 305)" }}
+      className="relative overflow-hidden py-3 bg-foreground select-none"
       aria-hidden="true"
     >
       <div className="flex whitespace-nowrap animate-marquee">
         {Array.from({ length: 14 }, (_, i) => i).map((i) => (
           <span
             key={`tick-${i}`}
-            className="font-display font-black uppercase mx-6"
-            style={{
-              fontSize: "0.72rem",
-              letterSpacing: "0.25em",
-              color: "oklch(0.04 0.018 285)",
-            }}
+            className="font-display font-black text-background uppercase mx-6"
+            style={{ fontSize: "0.72rem", letterSpacing: "0.25em" }}
           >
-            SIN & SAINTS ✕ WEAR YOUR CONTRADICTION ✕ THE HALO OR THE HORNS ✕
-            DROP 001 ✕
+            EUNIQUE ✦ WEAR YOUR WORLD ✦ NO RULES JUST FITS ✦ DROP 01 ✦
           </span>
         ))}
       </div>
@@ -1854,12 +1309,12 @@ function WatermarkBand() {
             key={`wm-${i}`}
             className="font-display font-black text-watermark uppercase leading-none"
             style={{
-              fontSize: "clamp(3rem, 11vw, 12rem)",
+              fontSize: "clamp(5rem, 18vw, 16rem)",
               letterSpacing: "-0.03em",
-              marginRight: "1.5rem",
+              marginRight: "1rem",
             }}
           >
-            SIN &amp; SAINTS
+            EUNIQUE
           </span>
         ))}
       </div>
@@ -1867,49 +1322,18 @@ function WatermarkBand() {
   );
 }
 
-function DualityDivider() {
-  return (
-    <div
-      className="border-t border-border py-5 flex items-center justify-center select-none"
-      aria-hidden="true"
-    >
-      <span
-        className="font-display font-bold text-muted-foreground uppercase tracking-[0.5em]"
-        style={{ fontSize: "0.65rem", color: "oklch(0.45 0.12 305)" }}
-      >
-        ✕ THE HALO ✕ OR ✕ THE HORNS ✕
-      </span>
-    </div>
-  );
-}
-
 function BrandStatement() {
   const { ref, visible } = useInView(0.2);
   return (
     <section
-      ref={ref as React.RefObject<HTMLElement>}
-      className="py-16 md:py-40 px-5 border-t border-border text-center relative overflow-hidden"
+      ref={ref}
+      className="py-16 md:py-40 px-5 border-t border-border text-center"
     >
-      {/* Background glow */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 50% at 50% 50%, oklch(0.72 0.28 305 / 0.04) 0%, transparent 70%)",
-        }}
-      />
       <motion.div
         initial={{ opacity: 0, y: 32 }}
         animate={visible ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 1 }}
-        className="relative z-10"
       >
-        <span
-          className="font-display font-bold text-muted-foreground uppercase tracking-[0.4em] block mb-6"
-          style={{ fontSize: "0.6rem" }}
-        >
-          THE MANIFESTO
-        </span>
         <h2
           className="font-display font-black text-foreground uppercase leading-none mx-auto mb-8"
           style={{
@@ -1918,12 +1342,12 @@ function BrandStatement() {
             maxWidth: "1000px",
           }}
         >
-          GOD FEARS
+          DRESS DIFFERENT.
           <br />
-          <span style={{ color: "oklch(0.72 0.28 305)" }}>THE FEARLESS.</span>
+          MOVE DIFFERENT.
         </h2>
         <p className="font-sans text-muted-foreground uppercase tracking-[0.28em] text-xs mb-10">
-          SIN & SAINTS — Born between the altar and the abyss.
+          EUNIQUE — Born on the streets. Worn everywhere.
         </p>
         <button
           type="button"
@@ -1937,7 +1361,7 @@ function BrandStatement() {
   );
 }
 
-/* ─── Reviews Section ───────────────────────────────────────────── */
+/* ─── Reviews Section ───────────────────────────────────────── */
 
 function StarRating({
   rating,
@@ -1970,13 +1394,9 @@ function StarRating({
           <Star
             size={interactive ? 18 : 13}
             strokeWidth={1.5}
-            fill={
-              (hover || rating) >= star ? "oklch(0.72 0.28 305)" : "transparent"
-            }
+            fill={(hover || rating) >= star ? "oklch(0.98 0 0)" : "transparent"}
             color={
-              (hover || rating) >= star
-                ? "oklch(0.72 0.28 305)"
-                : "oklch(0.35 0.025 285)"
+              (hover || rating) >= star ? "oklch(0.98 0 0)" : "oklch(0.45 0 0)"
             }
           />
         </button>
@@ -2008,7 +1428,7 @@ function ReviewsSection() {
       { name: name.trim(), rating, text: text.trim() },
       {
         onSuccess: () => {
-          toast.success("CONFESSION RECEIVED. APPRECIATED.");
+          toast.success("REVIEW SUBMITTED. APPRECIATED.");
           setName("");
           setRating(5);
           setText("");
@@ -2029,12 +1449,13 @@ function ReviewsSection() {
     });
   };
 
+  // Static seed reviews so section never looks empty
   const seedReviews = [
     {
       reviewer: "Arjun S.",
       rating: BigInt(5),
       comment:
-        "This tee hits different. Sin & Saints brings quality that's unreal for a limited drop — thick fabric, clean print. Worth every rupee.",
+        "This tee hits different. The quality is unreal for a limited drop — thick fabric, clean print. Worth every rupee.",
       timestamp:
         BigInt(Date.now() - 2 * 24 * 60 * 60 * 1000) * BigInt(1_000_000),
     },
@@ -2042,7 +1463,7 @@ function ReviewsSection() {
       reviewer: "Priya K.",
       rating: BigInt(5),
       comment:
-        "Art Is Alive is not just a tee, it's a statement. Got mine in medium and the fit is perfect. Sin & Saints is the real deal.",
+        "Art Is Alive is not just a tee, it's a statement. Got mine in medium and the fit is perfect. Already getting compliments.",
       timestamp:
         BigInt(Date.now() - 5 * 24 * 60 * 60 * 1000) * BigInt(1_000_000),
     },
@@ -2050,7 +1471,7 @@ function ReviewsSection() {
       reviewer: "Rahul M.",
       rating: BigInt(4),
       comment:
-        "Sin & Saints is doing something the big brands can't — exclusivity with soul. The drop 001 tee is clean. Size up if you like oversized.",
+        "Eunique is doing something the big brands can't — exclusivity with soul. The drop 001 tee is clean. Size up if you like oversized.",
       timestamp:
         BigInt(Date.now() - 8 * 24 * 60 * 60 * 1000) * BigInt(1_000_000),
     },
@@ -2081,7 +1502,7 @@ function ReviewsSection() {
               className="font-display font-bold text-muted-foreground uppercase tracking-[0.35em]"
               style={{ fontSize: "0.6rem" }}
             >
-              THE CONFESSIONAL
+              CUSTOMER REVIEWS
             </span>
             <h2
               className="font-display font-black text-foreground uppercase leading-none"
@@ -2090,7 +1511,7 @@ function ReviewsSection() {
                 letterSpacing: "-0.03em",
               }}
             >
-              CONFESSIONS.
+              THE VERDICT.
             </h2>
           </div>
           <div className="flex items-center gap-3">
@@ -2106,8 +1527,7 @@ function ReviewsSection() {
                 className="font-display text-muted-foreground uppercase tracking-[0.2em]"
                 style={{ fontSize: "0.55rem" }}
               >
-                {allReviews.length} CONFESSION
-                {allReviews.length !== 1 ? "S" : ""}
+                {allReviews.length} REVIEW{allReviews.length !== 1 ? "S" : ""}
               </span>
             </div>
           </div>
@@ -2119,11 +1539,8 @@ function ReviewsSection() {
             className="flex items-center gap-2 text-muted-foreground font-display text-xs uppercase tracking-widest mb-10"
             data-ocid="reviews.loading_state"
           >
-            <span
-              className="inline-block w-1 h-1 rounded-full animate-pulse"
-              style={{ background: "oklch(0.72 0.28 305)" }}
-            />
-            LOADING CONFESSIONS...
+            <span className="inline-block w-1 h-1 rounded-full bg-muted-foreground animate-pulse" />
+            LOADING REVIEWS...
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border mb-px">
@@ -2183,8 +1600,7 @@ function ReviewsSection() {
               letterSpacing: "-0.02em",
             }}
           >
-            LEAVE YOUR{" "}
-            <span style={{ color: "oklch(0.72 0.28 305)" }}>CONFESSION.</span>
+            LEAVE YOUR VERDICT.
           </h3>
           <form
             onSubmit={handleSubmit}
@@ -2205,17 +1621,7 @@ function ReviewsSection() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Arjun S."
-                className="bg-transparent border border-border text-foreground font-sans text-sm px-3 py-2.5 focus:outline-none transition-colors placeholder:text-muted-foreground/50"
-                style={{
-                  // @ts-ignore
-                  "--tw-ring-color": "oklch(0.72 0.28 305)",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "oklch(0.72 0.28 305 / 0.6)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "";
-                }}
+                className="bg-transparent border border-border text-foreground font-sans text-sm px-3 py-2.5 focus:outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
                 data-ocid="reviews.input"
               />
             </div>
@@ -2234,7 +1640,7 @@ function ReviewsSection() {
                 className="font-display font-bold text-muted-foreground uppercase tracking-[0.3em]"
                 style={{ fontSize: "0.55rem" }}
               >
-                YOUR CONFESSION
+                YOUR REVIEW
               </label>
               <textarea
                 id="review-text"
@@ -2242,13 +1648,7 @@ function ReviewsSection() {
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Tell us about your experience..."
                 rows={4}
-                className="bg-transparent border border-border text-foreground font-sans text-sm px-3 py-2.5 focus:outline-none transition-colors placeholder:text-muted-foreground/50 resize-none"
-                onFocus={(e) => {
-                  e.target.style.borderColor = "oklch(0.72 0.28 305 / 0.6)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "";
-                }}
+                className="bg-transparent border border-border text-foreground font-sans text-sm px-3 py-2.5 focus:outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50 resize-none"
                 data-ocid="reviews.textarea"
               />
             </div>
@@ -2258,7 +1658,7 @@ function ReviewsSection() {
               className="btn-primary justify-center"
               data-ocid="reviews.submit_button"
             >
-              {isPending ? "SUBMITTING..." : "SUBMIT CONFESSION"}
+              {isPending ? "SUBMITTING..." : "SUBMIT REVIEW"}
             </button>
           </form>
         </motion.div>
@@ -2276,13 +1676,13 @@ function Footer({ onOpenPolicy }: { onOpenPolicy: () => void }) {
     if (!email.trim()) return;
     mutate(email, {
       onSuccess: () => {
-        toast.success("YOU'RE IN. STAY LOCKED.");
+        toast.success("YOU'RE ON THE LIST. STAY LOCKED.");
         setEmail("");
       },
       onError: (err: Error) => {
         toast.error(
           err.message === "already_subscribed"
-            ? "That soul's already registered."
+            ? "That email's already in."
             : "Something went wrong. Try again.",
         );
       },
@@ -2295,22 +1695,21 @@ function Footer({ onOpenPolicy }: { onOpenPolicy: () => void }) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8">
           {/* Brand col */}
           <div className="md:col-span-1">
-            <p className="font-wordmark font-black text-foreground text-2xl tracking-normal mb-3">
-              SIN <span style={{ color: "oklch(0.72 0.28 305)" }}>&#38;</span>{" "}
-              SAINTS
+            <p className="font-display font-black text-foreground text-2xl uppercase tracking-tight mb-3">
+              EUNIQUE
             </p>
             <p className="font-sans text-muted-foreground text-xs leading-relaxed mb-4">
-              Born between the altar and the street. No rules. No limits. Just
-              the truth you wear.
+              Born on the streets. Worn everywhere. No rules. No limits. Just
+              authentic fits for real ones.
             </p>
             <a
-              href="https://sinandstaitns.co"
+              href="https://eunique.online"
               target="_blank"
               rel="noopener noreferrer"
               className="nav-link flex items-center gap-1 text-[10px]"
               data-ocid="footer.link"
             >
-              sinandstaitns.co
+              eunique.online
             </a>
           </div>
 
@@ -2386,11 +1785,11 @@ function Footer({ onOpenPolicy }: { onOpenPolicy: () => void }) {
           {/* Newsletter col */}
           <div>
             <h3 className="font-display font-black text-foreground text-xs uppercase tracking-[0.25em] mb-3">
-              JOIN THE CHOSEN
+              STAY ON THE DROP
             </h3>
             <p className="font-sans text-muted-foreground text-xs leading-relaxed mb-5">
-              Be first to get new drops, exclusive collabs, and limited releases
-              before the gates close.
+              Be first to cop new drops, exclusive collabs, and limited
+              releases.
             </p>
             <form
               onSubmit={handleSubmit}
@@ -2404,12 +1803,6 @@ function Footer({ onOpenPolicy }: { onOpenPolicy: () => void }) {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="bg-transparent text-foreground text-xs px-3 py-3 outline-none font-display font-bold tracking-[0.12em] uppercase w-full border border-border placeholder:text-muted-foreground focus:border-foreground transition-colors"
-                onFocus={(e) => {
-                  e.target.style.borderColor = "oklch(0.72 0.28 305 / 0.6)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "";
-                }}
                 data-ocid="newsletter.input"
               />
               <button
@@ -2418,15 +1811,14 @@ function Footer({ onOpenPolicy }: { onOpenPolicy: () => void }) {
                 className="btn-ghost-sm self-start disabled:opacity-50"
                 data-ocid="newsletter.submit_button"
               >
-                {isPending ? "SENDING..." : "ENTER THE FOLD"}
+                {isPending ? "SENDING..." : "JOIN THE DROP"}
               </button>
               {isSuccess && (
                 <p
-                  className="font-display font-bold text-[10px] uppercase tracking-widest"
-                  style={{ color: "oklch(0.72 0.28 305)" }}
+                  className="font-display font-bold text-[10px] text-foreground uppercase tracking-widest"
                   data-ocid="newsletter.success_state"
                 >
-                  YOUR SOUL IS REGISTERED.
+                  YOU'RE IN. STAY LOCKED.
                 </p>
               )}
               {isError && (
@@ -2474,12 +1866,12 @@ function Footer({ onOpenPolicy }: { onOpenPolicy: () => void }) {
           <p className="font-sans text-muted-foreground text-[10px] uppercase tracking-[0.25em]">
             © {new Date().getFullYear()}{" "}
             <a
-              href="https://sinandstaitns.co"
+              href="https://eunique.online"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-foreground transition-colors"
             >
-              sinandstaitns.co
+              eunique.online
             </a>{" "}
             — ALL RIGHTS RESERVED
           </p>
@@ -2502,7 +1894,6 @@ export default function App() {
   const [checkoutSize, setCheckoutSize] = useState<Size>("M");
   const [policyOpen, setPolicyOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
-  const [manifestoOpen, setManifestoOpen] = useState(false);
 
   const handleSecureYours = (size: Size) => {
     setCheckoutSize(size);
@@ -2533,23 +1924,15 @@ export default function App() {
           />
         )}
         {policyOpen && <PolicyPage onBack={() => setPolicyOpen(false)} />}
-        {manifestoOpen && (
-          <ManifestoPage
-            onBack={() => setManifestoOpen(false)}
-            onShopDrop={() => setShopOpen(true)}
-          />
-        )}
       </AnimatePresence>
 
-      <Header onManifesto={() => setManifestoOpen(true)} />
+      <Header />
       <main>
         <HeroSection onShopDrop={() => setShopOpen(true)} />
         <MarqueeBand />
         <DropCountdown onSecureYours={handleSecureYours} />
         <WatermarkBand />
-        <DualityDivider />
         <BrandStatement />
-        <LookbookSection />
         <ReviewsSection />
       </main>
       <Footer onOpenPolicy={() => setPolicyOpen(true)} />

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Product } from "../backend.d";
+import type { Product, Review } from "../backend.d";
 import { useActor } from "./useActor";
 
 export function useGetAllProducts() {
@@ -38,6 +38,48 @@ export function useSubscribeNewsletter() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["newsletter"] });
+    },
+  });
+}
+
+// Product ID for the Art Is Alive tee
+const ART_IS_ALIVE_PRODUCT_ID = BigInt(1);
+
+export function useGetReviews() {
+  const { actor, isFetching } = useActor();
+  return useQuery<Review[]>({
+    queryKey: ["reviews"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getReviews(ART_IS_ALIVE_PRODUCT_ID);
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useSubmitReview() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      name,
+      rating,
+      text,
+    }: {
+      name: string;
+      rating: number;
+      text: string;
+    }) => {
+      if (!actor) throw new Error("Actor not available");
+      await actor.submitReview(
+        ART_IS_ALIVE_PRODUCT_ID,
+        name,
+        BigInt(rating),
+        text,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["reviews"] });
     },
   });
 }

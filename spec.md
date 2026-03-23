@@ -1,22 +1,23 @@
-# Eunique
+# SIN & SAINTS — Lookbook + Manifesto Update
 
 ## Current State
-Single-page app. SHOP THE DROP button in HeroSection has no onClick. CheckoutPage/PolicyPage are modal overlays managed by state in App.
+Full e-commerce site for the SIN & SAINTS brand with: hero section, countdown timer, shop drop page, checkout with UPI payment, review/confessions section, exchange-only policy, mobile-optimized.
 
 ## Requested Changes (Diff)
 
 ### Add
-- ShopDropPage: full-screen overlay, new tee image /assets/uploads/IMG_7866-1.PNG, product title, sizes S/M/L/XL, price 2499, SECURE YOURS CTA
-- shopOpen state in App
+- **THE MANIFESTO page**: Full-screen editorial page accessible from nav/CTA, with dramatic brand statements, poetic copy, and immersive visual design that embodies the SIN & SAINTS duality. Accessible via a "THE MANIFESTO" nav link or button.
+- **LOOKBOOK section**: Grid/editorial layout on the main page showcasing the brand aesthetic. Uses the existing T-shirt images (IMG_7860-2-1.PNG, IMG_7866-1.PNG) in an editorial/fashion magazine style layout with dramatic captions.
 
 ### Modify
-- HeroSection SHOP THE DROP button calls onShopDrop handler
-- App renders ShopDropPage in AnimatePresence
+- Navigation: Add "MANIFESTO" link
+- Main page flow: Insert LOOKBOOK section between brand statement and reviews/confessions
 
 ### Remove
-- Nothing
+- Nothing removed
 
 ## Implementation Plan
-1. Add shopOpen state and handleShopDrop to App
-2. Create ShopDropPage component
-3. Wire HeroSection button to onShopDrop prop
+1. Add Manifesto view/page with full-screen editorial layout — brand philosophy, poetic copy, duality concept
+2. Add Lookbook section to main page — editorial image grid with atmospheric captions using existing product images
+3. Update navigation to include MANIFESTO link
+4. Ensure mobile responsiveness for both new sections

@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap");
+
 @font-face {
   font-family: "Bricolage Grotesque";
   src: url("/assets/fonts/BricolageGrotesque.woff2") format("woff2");
@@ -19,39 +21,39 @@
 @layer base {
   :root {
     --radius: 0rem;
-    /* Pure black background, pure white foreground */
-    --background: 0 0 0;
-    --foreground: 1 0 0;
-    --card: 0.06 0 0;
-    --card-foreground: 1 0 0;
-    --popover: 0.08 0 0;
-    --popover-foreground: 1 0 0;
-    --primary: 1 0 0;
-    --primary-foreground: 0 0 0;
-    --secondary: 0.1 0 0;
-    --secondary-foreground: 1 0 0;
-    --muted: 0.12 0 0;
-    --muted-foreground: 0.55 0 0;
-    --accent: 1 0 0;
-    --accent-foreground: 0 0 0;
-    --destructive: 0.577 0.245 27.325;
-    --destructive-foreground: 0.985 0 0;
-    --border: 0.18 0 0;
-    --input: 0.15 0 0;
-    --ring: 0.6 0 0;
-    --chart-1: 0.646 0.222 41.116;
-    --chart-2: 0.6 0.118 184.704;
-    --chart-3: 0.398 0.07 227.392;
-    --chart-4: 0.828 0.189 84.429;
-    --chart-5: 0.769 0.188 70.08;
-    --sidebar: 0.06 0 0;
-    --sidebar-foreground: 1 0 0;
-    --sidebar-primary: 1 0 0;
-    --sidebar-primary-foreground: 0 0 0;
-    --sidebar-accent: 0.1 0 0;
-    --sidebar-accent-foreground: 1 0 0;
-    --sidebar-border: 0.18 0 0;
-    --sidebar-ring: 0.5 0 0;
+    /* SIN & SAINTS — void black + electric violet + ice white */
+    --background: 0.04 0.018 285;
+    --foreground: 0.97 0.005 95;
+    --card: 0.08 0.018 285;
+    --card-foreground: 0.97 0.005 95;
+    --popover: 0.1 0.018 285;
+    --popover-foreground: 0.97 0.005 95;
+    --primary: 0.72 0.28 305;
+    --primary-foreground: 0.04 0.018 285;
+    --secondary: 0.1 0.022 285;
+    --secondary-foreground: 0.97 0.005 95;
+    --muted: 0.12 0.015 285;
+    --muted-foreground: 0.5 0.025 285;
+    --accent: 0.65 0.28 325;
+    --accent-foreground: 0.97 0.005 95;
+    --destructive: 0.6 0.22 15;
+    --destructive-foreground: 0.97 0.005 95;
+    --border: 0.16 0.022 285;
+    --input: 0.13 0.018 285;
+    --ring: 0.72 0.28 305;
+    --chart-1: 0.72 0.28 305;
+    --chart-2: 0.65 0.28 325;
+    --chart-3: 0.5 0.2 270;
+    --chart-4: 0.8 0.15 90;
+    --chart-5: 0.6 0.22 15;
+    --sidebar: 0.08 0.018 285;
+    --sidebar-foreground: 0.97 0.005 95;
+    --sidebar-primary: 0.72 0.28 305;
+    --sidebar-primary-foreground: 0.04 0.018 285;
+    --sidebar-accent: 0.12 0.022 285;
+    --sidebar-accent-foreground: 0.97 0.005 95;
+    --sidebar-border: 0.16 0.022 285;
+    --sidebar-ring: 0.72 0.28 305;
   }
 
   * {
@@ -76,8 +78,12 @@
     font-family: "Bricolage Grotesque", system-ui, sans-serif;
   }
 
+  .font-wordmark {
+    font-family: "Playfair Display", serif;
+  }
+
   .text-watermark {
-    color: oklch(0.13 0 0);
+    color: oklch(0.1 0.025 285);
   }
 
   .sw-tag {
@@ -88,9 +94,22 @@
     letter-spacing: 0.2em;
     text-transform: uppercase;
     padding: 0.25rem 0.65rem;
-    border: 1px solid oklch(1 0 0);
-    color: oklch(0 0 0);
-    background: oklch(1 0 0);
+    border: 1px solid oklch(0.72 0.28 305);
+    color: oklch(0.04 0.018 285);
+    background: oklch(0.72 0.28 305);
+  }
+
+  .sw-tag-ghost {
+    display: inline-block;
+    font-family: "Bricolage Grotesque", system-ui, sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.65rem;
+    border: 1px solid oklch(0.72 0.28 305);
+    color: oklch(0.72 0.28 305);
+    background: transparent;
   }
 
   .nav-link {
@@ -99,12 +118,12 @@
     font-weight: 700;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: oklch(0.65 0 0);
+    color: oklch(0.5 0.025 285);
     transition: color 0.15s ease;
   }
 
   .nav-link:hover {
-    color: oklch(1 0 0);
+    color: oklch(0.72 0.28 305);
   }
 
   .btn-primary {
@@ -112,21 +131,21 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.9rem 2.2rem;
-    background: oklch(1 0 0);
+    background: oklch(0.72 0.28 305);
     font-family: "Bricolage Grotesque", system-ui, sans-serif;
     font-size: 0.72rem;
     font-weight: 800;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: oklch(0 0 0);
-    border: 2px solid oklch(1 0 0);
+    color: oklch(0.04 0.018 285);
+    border: 2px solid oklch(0.72 0.28 305);
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease;
   }
 
   .btn-primary:hover {
     background: transparent;
-    color: oklch(1 0 0);
+    color: oklch(0.72 0.28 305);
   }
 
   .btn-ghost {
@@ -140,15 +159,15 @@
     font-weight: 800;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: oklch(1 0 0);
-    border: 2px solid oklch(1 0 0);
+    color: oklch(0.97 0.005 95);
+    border: 2px solid oklch(0.72 0.28 305);
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease;
   }
 
   .btn-ghost:hover {
-    background: oklch(1 0 0);
-    color: oklch(0 0 0);
+    background: oklch(0.72 0.28 305);
+    color: oklch(0.04 0.018 285);
   }
 
   .btn-ghost-sm {
@@ -162,26 +181,39 @@
     font-weight: 800;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: oklch(1 0 0);
-    border: 1.5px solid oklch(0.35 0 0);
+    color: oklch(0.97 0.005 95);
+    border: 1.5px solid oklch(0.3 0.025 285);
     cursor: pointer;
     transition: border-color 0.2s ease, color 0.2s ease;
   }
 
   .btn-ghost-sm:hover {
-    border-color: oklch(1 0 0);
-    color: oklch(1 0 0);
+    border-color: oklch(0.72 0.28 305);
+    color: oklch(0.72 0.28 305);
   }
 }
 
-@keyframes pulse-red {
+@keyframes pulse-violet {
   0%,
   100% {
     opacity: 1;
-    box-shadow: 0 0 8px 2px rgba(239, 68, 68, 0.7);
+    box-shadow: 0 0 10px 3px oklch(0.72 0.28 305 / 0.7);
   }
   50% {
-    opacity: 0.5;
-    box-shadow: 0 0 3px 1px rgba(239, 68, 68, 0.3);
+    opacity: 0.4;
+    box-shadow: 0 0 4px 1px oklch(0.72 0.28 305 / 0.25);
   }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 22s linear infinite;
 }
